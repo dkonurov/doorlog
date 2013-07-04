@@ -36,102 +36,100 @@
         {include file='protected/views/dialog.tpl'}
 
         <form method="POST" id="user">
-        <div class="span7">
-        <table class='table table-bordered'>
-            {if !isset($userId)}
-                <tr>
-                    <td>Пользователь</td>
-                    <td>
-                        <select form='user' name="userId">
-                            {html_options options=$users}
-                        </select>
-                        </br>
-                    </td>
-                </tr>
-            {/if}
-            <tr>
-                <td>Отдел</td>
-                <td>
-                    <select form='user' name="department">
-                        <option value=0></option>
-                        {html_options options=$departments selected={$userInfo['department_id']}}
-                    </select>
-                    </br>
-                </td>
-            </tr>
-            <tr>
-                <td>Должность</td>
-                <td>
-                    <select name="position">
-                        <option value=0></option>
-                        {html_options options=$positions selected={$userInfo['position_id']}}
-                    </select>
-                    </br>
-                </td>
-            </tr>
-            <tr>
-                <td>Права доступа</td>
-                <td>
-                    <select name="role">
-                        {html_options options=$roles selected={$userRole['0']['id']}}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td>
-                    <input type="text" maxlength="45" size="40" name="email"
-                        {if isset($userId)}
-                        value={$userInfo['email']}
-                    {/if}>
-                </td>
-            </tr>
-            <tr>
-                <td>Телефон</td>
-                <td>
-                    <input type="text" maxlength="11" name="phone"
-                    {if isset($userId)}
-                    value={$userInfo['phone']}
-                    {/if}>
-                </td>
-            </tr>
-            <tr>
-                <td>Дата рождения</td>
-                <td>
-                    <input name="birthday" id="datepicker" type="text"
-                    {if isset($userId)}
-                    value="{$userInfo['birthday']}"
-                    {/if}/>
-            <br>
-                </td>
-            </tr>
-            <tr>
-            <td>Выводить в отчётах </td>
-            <td>{if isset($userId)}
-                    <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}>Выводить в отчётах</p>
-            {else}
-                    <p><input name="is_shown" type="checkbox" value="1" checked>Выводить в отчётах</p>
-            {/if}
-            </td>
-            </tr>
-        </table>
+            <div class="span7">
+                <table class='table table-bordered'>
+                    {if !isset($userId)}
+                        <tr>
+                            <td>Пользователь</td>
+                            <td>
+                                <select form='user' name="userId">
+                                    {html_options options=$users}
+                                </select>
+                            </td>
+                        </tr>
+                    {/if}
+                    <tr>
+                        <td>Отдел</td>
+                        <td>
+                            <select form='user' name="department">
+                                <option value=0></option>
+                                {html_options options=$departments selected={$userInfo['department_id']}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Должность</td>
+                        <td>
+                            <select name="position">
+                                <option value=0></option>
+                                {html_options options=$positions selected={$userInfo['position_id']}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Права доступа</td>
+                        <td>
+                            <select name="role">
+                                {html_options options=$roles selected={$userRole['0']['id']}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input type="text" maxlength="45" size="40" name="email"
+                                {if isset($userId)}
+                                value={$userInfo['email']}
+                            {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Телефон</td>
+                        <td>
+                            <input type="text" maxlength="11" name="phone"
+                            {if isset($userId)}
+                            value={$userInfo['phone']}
+                            {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата рождения</td>
+                        <td>
+                            <input name="birthday" id="datepicker" type="text"
+                            {if isset($userId)}
+                            value="{$userInfo['birthday']}"
+                            {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Выводить в отчётах </td>
+                        <td>
+                            {if isset($userId)}
+                                <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в отчётах</p>
+                            {else}
+                                    <p><input name="is_shown" type="checkbox" value="1" checked/>Выводить в отчётах</p>
+                            {/if}
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </form>
-        <button type=submit class="btn btn-success" form="user">
-            {if isset($userId)}
-                Сохранить
-            {else}
-                Добавить
-            {/if}
-        </button>
-        {if isset($userId)}
-            <a class="btn" href="{$_root}/users/show?id={$userInfo['id']}"> Отмена </a>
-            <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
-        {else}
+        <div class="clear">
+            <button type=submit class="btn btn-success" form="user">
+                {if isset($userId)}
+                    Сохранить
+                {else}
+                    Добавить
+                {/if}
+            </button>
             <a class="btn" href="{$_root}/users"> Отмена </a>
-        {/if}
-    </div>
-        <form action = "{$_root}/users/delete" method='post' id="delete">
-            <input type="hidden" name="id" value="{$userId}">
-        </form>
+
+            {if isset($userId)}
+                <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
+                <form action = "{$_root}/users/delete" method='post' id="delete">
+                    <input type="hidden" name="id" value="{$userId}">
+                </form>
+            {/if}
+        </div>
     {/block}
 {/extends}

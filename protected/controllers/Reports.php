@@ -207,7 +207,7 @@ class Reports extends Controller {
         $lastMonthDay = strtotime($selectedDate) + date("t", strtotime($selectedDate))*24*60*60 ;
         $vacation = $holidays->getAllDays($selectedDate);
 
-        $timeoffs = $user->getTimeoffsById($id, $selectedDate, $timeoffType);
+        $timeoffs = $user->getTimeoffsByUserId($id, $selectedDate, $timeoffType);
         foreach ($timeoffs as $timeOff) {
             $timeoffsArray[$timeOff['date']]['name'] = $timeOff['name'];
             $timeoffsArray[$timeOff['date']]['type'] = $timeOff['id'];

@@ -348,15 +348,15 @@ class Users extends Model{
 
     /**
      * Add timeoff for current user
-     * @param integer $id
+     * @param integer $userId
      * @param integer $type
      * @param string $data
      * @return array
      */
-    public function setTimeoffs($id, $type, $data){
-        $q = 'INSERT INTO users_statuses(user_id, status_id, date) VALUES (:id, :type, :date) ';
+    public function setTimeoffs($userId, $type, $data){
+        $q = 'INSERT INTO users_statuses(user_id, status_id, date) VALUES (:userId, :type, :date) ';
         $params = array();
-        $params['id'] = $id;
+        $params['userId'] = $userId;
         $params['type'] = $type;
         $params['date'] = $data;
         $result = $this->execute($q, $params);
@@ -365,17 +365,17 @@ class Users extends Model{
 
     /**
      * Get timeoff for current user by id
-     * @param integer $id
+     * @param integer $userId
      * @param integer $type
      * @param string $data
      * @return array
      */
-    public function getTimeoffsById($id, $date, $type){
+    public function getTimeoffsByUserId($userId, $date, $type){
 
         $date1 = date("y-m-d", strtotime($date));
         $date2 = date("y-m-d", (strtotime($date) + 30*24*60*60 ));
         $params = array();
-        $params['id'] = $id;
+        $params['id'] = $userId;
         $params['date1'] = $date1;
         $params['date2'] = $date2;
         $q = "SELECT *

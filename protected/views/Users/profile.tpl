@@ -19,7 +19,6 @@
             <colgroup>
                 <col class="col-small">
             </colgroup>
-            {foreach from=userInfo item=user}
                 <tr>
                     <td> Имя </td>
                     <td>{$userInfo['name']}</td>
@@ -66,14 +65,15 @@
                         {/if}
                     </td>
                 </tr>
-            {/foreach}
         </table>
     </div>
-    <div class="span4 additional">
-        {include file='protected/views/Users/changePassword.tpl'}
-    </div>
-    {if ('timeoffs_add'|checkPermission)}
-    <div class="span4 additional">
+        {if $isOwner }
+            <div class="span4 additional">
+                {include file='protected/views/Users/changePassword.tpl'}
+            </div>
+        {/if}
+        {if ('timeoffs_add'|checkPermission)}
+            <div class="span4 additional">
                 {include file='protected/views/Users/timeoff.tpl'}
             </div>
         {/if}

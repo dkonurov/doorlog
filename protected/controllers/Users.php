@@ -120,7 +120,7 @@ class Users extends Controller {
         $id = '';
 
         if (isset($_GET['date']) && isset($_GET['id']) && !empty($_GET['date']) && !empty($_GET['id']) ){
-            $timeoffs = $user->getTimeoffsById($_GET['id'], $_GET['date'], $_GET['type']);
+            $timeoffs = $user->getTimeoffsByUserId($_GET['id'], $_GET['date'], $_GET['type']);
             $date = $_GET['date'];
             $userInfo = $user->getUserInfo($_GET['id']);
             if ($userInfo) {
@@ -164,7 +164,7 @@ class Users extends Controller {
             $this->render("errorAccess.tpl");
         }
         $timeoffs = new UsersModel;
-        $id = $_POST['id'];
+        $userId = $_POST['id'];
 
         if(isset($_POST['from']) && isset($_POST['to']) && $_POST['from'] && $_POST['to']){
             $from = $_POST['from'];
@@ -177,7 +177,7 @@ class Users extends Controller {
 
             for($i=0; $i<=$sumDays; $i++){
                 $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                $res = $timeoffs->setTimeoffs($id, $type, $date);
+                $res = $timeoffs->setTimeoffs($userId, $type, $date);
             }
             if ($res){
                 FlashMessages::addMessage("Отгул добавлен.", "success");
@@ -188,7 +188,7 @@ class Users extends Controller {
         } else {
             FlashMessages::addMessage("Ошибка заполнения. Отгул не был добавлен.", "error");
         }
-        Utils::redirect('/users/profile');
+        Utils::redirect('/users/profile?id='.$userId);
     }
 
     /**
