@@ -107,9 +107,9 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function insertUsers($user, $email, $hash, $salt, $position, $department, $tel, $bday, $is_shown){
-        $add="INSERT INTO user(personal_id, position_id, email, password, salt, department_id, created, birthday, phone,is_shown)
-            VALUES (:user,:position,:email,:hash,:salt,:department, NOW(), :bday, :tel, :is_shown)";
+    public function insertUsers($user, $email, $hash, $salt, $position, $department, $tel, $bday, $swork, $ework, $is_shown, $halftime){
+        $add="INSERT INTO user(personal_id, position_id, email, password, salt, department_id, created, birthday, startwork, endwork, phone, is_shown, halftime)
+            VALUES (:user,:position,:email,:hash,:salt,:department, NOW(), :bday, :startwork, :endwork, :tel, :is_shown, :halftime)";
         $params=array();
         $params['user'] = $user;
         $params['position'] = $position;
@@ -118,8 +118,11 @@ class Users extends Model{
         $params['salt'] = $salt;
         $params['department'] = $department;
         $params['bday'] = $bday;
+        $params['startwork'] = $swork;
+        $params['endwork'] = $ework;
         $params['tel'] = $tel;
         $params['is_shown'] = $is_shown;
+        $params['halftime'] = $halftime;
 
         $result = $this->execute($add,$params);
         return $result;
@@ -273,9 +276,12 @@ class Users extends Model{
               d.name as department,
               p.name as position,
               u.birthday,
+              u.startwork,
+              u.endwork,
               u.phone,
               u.created,
-              u.is_shown
+              u.is_shown,
+              u.halftime
             FROM `tc-db-main`.`personal` t
             JOIN `user` u
               ON t.id = u.personal_id
@@ -405,22 +411,28 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function editUser($id, $position, $email, $department, $birthday, $phone, $is_shown){
+    public function editUser($id, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $is_shown, $halftime){
         $params = array();
         $params['id'] = $id;
         $params['position'] = $position;
         $params['email'] = $email;
         $params['department'] = $department;
         $params['birthday'] = $birthday;
+        $params['startwork'] = $startwork;
+        $params['endwork'] = $endwork;
         $params['phone'] = $phone;
         $params['is_shown'] = $is_shown;
+        $params['halftime'] = $halftime;
         $q= "UPDATE user
             SET position_id = (:position),
             email = (:email),
             department_id = (:department),
             birthday = (:birthday),
+            startwork = (:startwork),
+            endwork = (:endwork),
             phone = (:phone),
-            is_shown = (:is_shown)
+            is_shown = (:is_shown),
+            halftime = (:halftime)
             WHERE id = (:id)";
         $result = $this->execute($q, $params);
         return $result;

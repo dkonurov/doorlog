@@ -106,6 +106,34 @@
                 </td>
             </tr>
             <tr>
+                <td>Принят</td>
+                <td>
+                    <input name="startwork" id="datepicker-start" type="text"
+                    {if isset($userId)}
+                    value="{$userInfo['startwork']}"
+                    {/if}/>
+            <br>
+                </td>
+            </tr>
+            <tr>
+                <td>Уволен</td>
+                <td>
+                    <input name="endwork" id="datepicker-end" type="text"
+                    {if isset($userId)}
+                    value="{$userInfo['endwork']}"
+                    {/if}/>
+            <br>
+                </td>
+            </tr>
+            <tr>
+            <td>На полствки </td>
+            <td>{if isset($userId)}
+                    <p><input name="halftime" type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
+            {else}
+                    <p><input name="halftime" type="checkbox" value="1">Полставки</p>
+            {/if}
+            </td>
+            </tr>
             <td>Выводить в отчётах </td>
             <td>{if isset($userId)}
                     <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}>Выводить в отчётах</p>

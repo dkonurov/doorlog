@@ -227,7 +227,7 @@ class Users extends Controller {
         $roles = new RolesModel();
 
         if (isset($_POST['department']) && isset($_POST['position']) && isset($_POST['email'])
-            && isset($_POST['phone']) && isset($_POST['birthday'])) {
+            && isset($_POST['phone']) && isset($_POST['startwork']) && isset($_POST['birthday'])) {
             $position = $_POST['position'];
             $department = $_POST['department'];
             $role = $_POST['role'];
@@ -235,9 +235,18 @@ class Users extends Controller {
             $phone = $_POST['phone'];
             $birthday = $_POST['birthday'];
             $birthday = date('Y-m-d', strtotime($birthday));
+            $startwork = $_POST['startwork'];
+            $startwork = date('Y-m-d', strtotime($startwork));
+            $endwork = $_POST['endwork'];
+            $endwork = date('Y-m-d', strtotime($endwork));
+
             if (isset($_POST['is_shown'])){
                 $isShown = $_POST['is_shown'];
             } else $isShown = 0;
+
+            if (isset($_POST['halftime'])){
+                $halftime = $_POST['halftime'];
+            } else $halftime = 0;
 
             $inputErrors = $users->checkUserAttr($email, $phone, $position, $department);
             if ($inputErrors){
@@ -246,11 +255,11 @@ class Users extends Controller {
             } else {
                 if(isset($_GET['id']) && $_GET['id']){
                     $id = $_GET['id'];
-                    $this->update($id, $position, $role, $email, $department, $birthday, $phone, $isShown);
+                    $this->update($id, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
                 } else {
                     if(isset($_POST['userId'])){
                         $user = $_POST['userId'];
-                        $this->add($user, $email, $position, $role, $department, $birthday, $phone, $isShown);
+                        $this->add($user, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
                     }
                 }
             }
@@ -313,13 +322,13 @@ class Users extends Controller {
      * @param boolean $isShown
      * @return void
      */
-    public function add($user, $email, $position, $role, $department, $birthday, $phone, $isShown){
+    public function add($user, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
         $salt = Utils::createRandomString(5, 5);
         $password = Utils::createRandomString(8, 10);
         $hash = $this->generateHash($password, $salt);
-        if (($users->insertUsers($user, $email, $hash, $salt, $position, $department, $phone, $birthday, $isShown))
+        if (($users->insertUsers($user, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime))
             && ($roles->insertUserRole($users->getId($user), $role) )) {
             FlashMessages::addMessage("Пользователь успешно добавлен.", "info");
         } else {
@@ -341,10 +350,10 @@ class Users extends Controller {
      * @param integer $isShown
      * @return void
      */
-    public function update($id, $position, $role, $email, $department, $birthday, $phone, $isShown){
+    public function update($id, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
-        if(($users->editUser($id, $position, $email, $department, $birthday, $phone, $isShown))
+        if(($users->editUser($id, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime))
             && ($roles->editUserRole($id, $role))){
             FlashMessages::addMessage("Пользователь успешно отредактирован.", "success");
         } else {
