@@ -11,6 +11,8 @@
         <script src="{$_root}/assets/js/jquery-1.9.1.min.js"></script>
         <script src="{$_root}/protected/vendor/twitter/bootstrap/docs/assets/js/bootstrap.min.js"></script>
         <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js" type="text/javascript" ></script>
+        <script src="{$_root}/assets/js/jquery.ui.datepicker-ru.js"></script>
+
         <link href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" rel="stylesheet"  />
     </head>
     <body>

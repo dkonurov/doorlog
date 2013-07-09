@@ -258,11 +258,39 @@ class Users extends Controller {
             $role = $_POST['role'];
             $email = $_POST['email'];
             $phone = $_POST['phone'];
+
             $birthday = $_POST['birthday'];
-            $birthday = date('Y-m-d', strtotime($birthday));
+            if ($birthday != ""){
+                $birthday = date('Y-m-d', strtotime($birthday));
+            } else {
+                $birthday = "0000-00-00";
+            }
+
+            $startwork = $_POST['startwork'];
+            if ($startwork != ""){
+                $startwork = date('Y-m-d', strtotime($startwork));
+            } else {
+                $startwork = "0000-00-00";
+            }
+
+            $endwork = $_POST['endwork'];
+            if ($endwork != ""){
+                $endwork = date('Y-m-d', strtotime($endwork));
+            } else {
+                $endwork = "0000-00-00";
+            }
+
             if (isset($_POST['is_shown'])){
                 $isShown = $_POST['is_shown'];
-            } else $isShown = 0;
+            } else {
+                $isShown = 0;
+            }
+
+            if (isset($_POST['halftime'])){
+                $halftime = $_POST['halftime'];
+            } else {
+                $halftime = 0;
+            }
 
             $inputErrors = $users->checkUserAttr($email, $phone, $position, $department);
             if ($inputErrors){
@@ -271,11 +299,11 @@ class Users extends Controller {
             } else {
                 if(isset($_GET['id']) && $_GET['id']){
                     $id = $_GET['id'];
-                    $this->update($id, $position, $role, $email, $department, $birthday, $phone, $isShown);
+                    $this->update($id, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
                 } else {
                     if(isset($_POST['userId'])){
                         $user = $_POST['userId'];
-                        $this->add($user, $email, $position, $role, $department, $birthday, $phone, $isShown);
+                        $this->add($user, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
                     }
                 }
             }
@@ -309,12 +337,14 @@ class Users extends Controller {
         if($editActionFlag){
             $id = $_GET['id'];
             $userInfo = $users->getUserInfo($id);
+            $userRole = $users->getUserRoles($id);
             $this->render("Users/manage.tpl", array(
                 'userId' => $id,
                 'userInfo' => $userInfo,
                 'positions' => $sortedPositions,
                 'departments' => $sortedDepartments,
-                'roles' => $sortedRoles
+                'roles' => $sortedRoles,
+                'userRole' => $userRole
             ));
         } if(!$editActionFlag) {
             $this->render("Users/manage.tpl", array(
@@ -338,13 +368,13 @@ class Users extends Controller {
      * @param boolean $isShown
      * @return void
      */
-    public function add($user, $email, $position, $role, $department, $birthday, $phone, $isShown){
+    public function add($user, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
         $salt = Utils::createRandomString(5, 5);
         $password = Utils::createRandomString(8, 10);
         $hash = $this->generateHash($password, $salt);
-        if (($users->insertUsers($user, $email, $hash, $salt, $position, $department, $phone, $birthday, $isShown))
+        if (($users->insertUsers($user, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime))
             && ($roles->insertUserRole($users->getId($user), $role) )) {
             FlashMessages::addMessage("Пользователь успешно добавлен.", "info");
         } else {
@@ -366,10 +396,10 @@ class Users extends Controller {
      * @param integer $isShown
      * @return void
      */
-    public function update($id, $position, $role, $email, $department, $birthday, $phone, $isShown){
+    public function update($id, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
-        if(($users->editUser($id, $position, $email, $department, $birthday, $phone, $isShown))
+        if(($users->editUser($id, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime))
             && ($roles->editUserRole($id, $role))){
             FlashMessages::addMessage("Пользователь успешно отредактирован.", "success");
         } else {

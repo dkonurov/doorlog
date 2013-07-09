@@ -97,8 +97,42 @@
                         <td>
                             <input name="birthday" id="datepicker" type="text"
                             {if isset($userId)}
-                            value="{$userInfo['birthday']}"
+                                value="{$userInfo['birthday']|date_format:"%d.%m.%Y"}"
+                            {else}
+                                value=""
                             {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата принятия</td>
+                        <td>
+                            <input name="startwork" id="datepicker-start" type="text"
+                            {if isset($userId)}
+                                value="{$userInfo['startwork']|date_format:"%d.%m.%Y"}"
+                            {else}
+                                value=""
+                            {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата увольнения</td>
+                        <td>
+                            <input name="endwork" id="datepicker-end" type="text"
+                            {if isset($userId)}
+                                value="{$userInfo['endwork']|date_format:"%d.%m.%Y"}"
+                            {else}
+                                value=""
+                            {/if}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>На полствки </td>
+                        <td>
+                            {if isset($userId)}
+                                <p><input name="halftime" type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
+                            {else}
+                                <p><input name="halftime" type="checkbox" value="1">Полставки</p>
+                            {/if}
                         </td>
                     </tr>
                     <tr>
@@ -107,7 +141,7 @@
                             {if isset($userId)}
                                 <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в отчётах</p>
                             {else}
-                                    <p><input name="is_shown" type="checkbox" value="1" checked/>Выводить в отчётах</p>
+                                <p><input name="is_shown" type="checkbox" value="1" checked/>Выводить в отчётах</p>
                             {/if}
                         </td>
                     </tr>
