@@ -51,10 +51,26 @@
                             <td> {$userInfo['birthday']|date_format:"%d.%m.%Y"} </td>
                         </tr>
                     {/if}
+                    {if $userInfo['birthday']}
+                        <tr>
+                            <td> Дата устройства </td>
+                            <td> {$userInfo['startwork']|date_format:"%d.%m.%Y"} </td>
+                        </tr>
+                    {/if}
+                    {if $userInfo['birthday']}
+                        <tr>
+                            <td> Дата увольнения </td>
+                            <td> {$userInfo['endwork']|date_format:"%d.%m.%Y"} </td>
+                        </tr>
+                    {/if}
                 {/if}
                 <tr>
                     <td> Дата регистрации </td>
-                    <td> {$userInfo['created']} </td>
+                    <td> {$userInfo['created']|date_format:"%d.%m.%Y"} </td>
+                </tr>
+                <tr>
+                    <td> Работа на полставки </td>
+                    <td> {if {$userInfo['halftime']}} Да {else} Нет {/if}</td>
                 </tr>
                 <tr>
                     <td> Статус </td>
