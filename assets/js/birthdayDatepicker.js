@@ -11,7 +11,6 @@ $(function() {
   $( "#datepicker-start" ).datepicker({
     changeMonth: true,
     changeYear: true,
-    defaultDate: '-16y'
   });
 });
 
@@ -19,6 +18,5 @@ $(function() {
   $( "#datepicker-end" ).datepicker({
     changeMonth: true,
     changeYear: true,
-    defaultDate: '-16y'
   });
 });

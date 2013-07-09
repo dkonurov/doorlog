@@ -100,7 +100,7 @@
                 <td>
                     <input name="birthday" id="datepicker" type="text"
                     {if isset($userId)}
-                        value="{$userInfo['birthday']}"
+                        value="{$userInfo['birthday']|date_format:"%d.%m.%Y"}"
                     {else}
                         value=""
                     {/if}/>
@@ -112,7 +112,7 @@
                 <td>
                     <input name="startwork" id="datepicker-start" type="text"
                     {if isset($userId)}
-                        value="{$userInfo['startwork']}"
+                        value="{$userInfo['startwork']|date_format:"%d.%m.%Y"}"
                     {else}
                         value=""
                     {/if}/>
@@ -124,7 +124,7 @@
                 <td>
                     <input name="endwork" id="datepicker-end" type="text"
                     {if isset($userId)}
-                        value="{$userInfo['endwork']}"
+                        value="{$userInfo['endwork']|date_format:"%d.%m.%Y"}"
                     {else}
                         value=""
                     {/if}/>

@@ -233,6 +233,7 @@ class Users extends Controller {
             $role = $_POST['role'];
             $email = $_POST['email'];
             $phone = $_POST['phone'];
+
             $birthday = $_POST['birthday'];
             if ($birthday != ""){
                 $birthday = date('Y-m-d', strtotime($birthday));
@@ -253,15 +254,18 @@ class Users extends Controller {
             } else {
                 $endwork = "0000-00-00";
             }
-            var_dump($endwork);
 
             if (isset($_POST['is_shown'])){
                 $isShown = $_POST['is_shown'];
-            } else $isShown = 0;
+            } else {
+                $isShown = 0;
+            }
 
             if (isset($_POST['halftime'])){
                 $halftime = $_POST['halftime'];
-            } else $halftime = 0;
+            } else {
+                $halftime = 0;
+            }
 
             $inputErrors = $users->checkUserAttr($email, $phone, $position, $department);
             if ($inputErrors){
@@ -308,17 +312,6 @@ class Users extends Controller {
         if($editActionFlag){
             $id = $_GET['id'];
             $userInfo = $users->getUserInfo($id);
-            if ($userInfo['birthday'] == "0000-00-00"){
-                $userInfo['birthday'] = "";
-            }
-
-            if ($userInfo['startwork'] == "0000-00-00"){
-                $userInfo['startwork'] = "";
-            }
-
-            if ($userInfo['endwork'] == "0000-00-00"){
-                $userInfo['endwork'] = "";
-            }
             $userRole = $users->getUserRoles($id);
             $this->render("Users/manage.tpl", array(
                 'userId' => $id,
