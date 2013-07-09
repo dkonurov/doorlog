@@ -163,7 +163,7 @@ class Users extends Controller {
         if (!Acl::checkPermission('timeoffs_add')) {
             $this->render("errorAccess.tpl");
         }
-        $userModel = new UsersModel;
+        $userModel = new UsersModel();
         $userId = $_POST['id'];
 
         if (isset($_POST['from']) && isset($_POST['to']) && $_POST['from'] && $_POST['to']) {
