@@ -7,13 +7,17 @@
         <input type="text" id="from" name="from" />
         <label for="to"> Выберите окончание периода: </label>
         <input type="text" id="to" name="to" />
-
+        
         <label for="timeoff_type"> Тип: </label>
         <select id="timeoff_type" name = "vtype">
             {foreach from=$statuses item=stat}
                 <option value = "{$stat['id']}"> {$stat['name']} </option>
             {/foreach}
         </select>
+        <div id="office">
+            <label for ="other_office"> Рабочее время: </label>
+            <input type="text" id="other_office" name="other_office"/>
+        </div>
         <br>
         <input type="submit" value="Добавить" name="submit" id="add" class="btn btn-success">
     </form>

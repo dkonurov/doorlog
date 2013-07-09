@@ -353,12 +353,13 @@ class Users extends Model{
      * @param string $data
      * @return array
      */
-    public function setTimeoffs($userId, $type, $data){
-        $q = 'INSERT INTO users_statuses(user_id, status_id, date) VALUES (:userId, :type, :date) ';
+    public function setTimeoffs($userId, $type, $data, $time){
+        $q = 'INSERT INTO users_statuses(user_id, status_id, date, time) VALUES (:userId, :type, :date, :time) ';
         $params = array();
         $params['userId'] = $userId;
         $params['type'] = $type;
         $params['date'] = $data;
+        $params['time'] = $time;
         $result = $this->execute($q, $params);
         return $result;
     }
@@ -487,5 +488,14 @@ class Users extends Model{
         } else {
             return false;
         }
+    }
+
+    public function getTimeOffByUserId($id){
+        $params['id']=$id;
+        $q= "SELECT date
+            FROM users_statuses
+            WHERE user_id=:id";
+        $result = $this->fetchAll($q, $params);
+        return $result;
     }
 }
