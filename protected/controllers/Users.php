@@ -164,7 +164,7 @@ class Users extends Controller {
             $this->render("errorAccess.tpl");
         }
         $userModel = new UsersModel;
-        $id = $_POST['id'];
+        $userId = $_POST['id'];
 
         if (isset($_POST['from']) && isset($_POST['to']) && $_POST['from'] && $_POST['to']) {
             $from = $_POST['from'];
@@ -181,7 +181,7 @@ class Users extends Controller {
             $sumDays = floor(($dateFinish - $dateStart) / (3600 * 24));
 
             $checkTime=true;
-            $timeOffDate=$userModel->getTimeOffById($id);
+            $timeOffDate=$userModel->getTimeOffById($userId);
             if (isset($timeOffDate)) {
                 for ($i=0; $i<=$sumDays; $i++) {
                     for ($k=0; $k<=count($timeOffDate); $k++) {
@@ -200,7 +200,7 @@ class Users extends Controller {
             if ($checkTime) {
                 for ($i=0; $i<=$sumDays; $i++) {
                     $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                    $res = $userModel->setTimeoffs($id, $type, $date, $time);
+                    $res = $userModel->setTimeoffs($userId, $type, $date, $time);
                 }
                 if ($res) {
                     FlashMessages::addMessage("Отгул добавлен.", "success");
