@@ -73,7 +73,7 @@
                 <td>Права доступа</td>
                 <td>
                     <select name="role">
-                        {html_options options=$roles selected={$userRole['0']['id']}}
+                        {html_options options=$roles selected={$userRole[0]['id']}}
                     </select>
                 </td>
             </tr>
@@ -100,7 +100,9 @@
                 <td>
                     <input name="birthday" id="datepicker" type="text"
                     {if isset($userId)}
-                    value="{$userInfo['birthday']}"
+                        value="{$userInfo['birthday']}"
+                    {else}
+                        value=""
                     {/if}/>
             <br>
                 </td>
@@ -110,7 +112,9 @@
                 <td>
                     <input name="startwork" id="datepicker-start" type="text"
                     {if isset($userId)}
-                    value="{$userInfo['startwork']}"
+                        value="{$userInfo['startwork']}"
+                    {else}
+                        value=""
                     {/if}/>
             <br>
                 </td>
@@ -120,7 +124,9 @@
                 <td>
                     <input name="endwork" id="datepicker-end" type="text"
                     {if isset($userId)}
-                    value="{$userInfo['endwork']}"
+                        value="{$userInfo['endwork']}"
+                    {else}
+                        value=""
                     {/if}/>
             <br>
                 </td>

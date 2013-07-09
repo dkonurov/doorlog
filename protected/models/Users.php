@@ -293,9 +293,19 @@ class Users extends Model{
             ";
         $params=array();
         $params['id']=$userId;
-
         $result = $this->fetchOne($q,$params);
         $result['created'] = date("d.m.Y", strtotime($result['created']));
+        if ( $result['startwork'] != "0000-00-00" ){
+            $result['startwork'] = date("d.m.Y", strtotime($result['startwork']));
+        }
+
+        if ( $result['endwork'] != "0000-00-00" ){
+            $result['endwork'] = date("d.m.Y", strtotime($result['endwork']));
+        }
+
+        if ( $result['birthday'] != "0000-00-00" ){
+            $result['birthday'] = date("d.m.Y", strtotime($result['birthday']));
+        }
         return $result;
     }
 

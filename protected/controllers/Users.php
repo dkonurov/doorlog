@@ -227,18 +227,33 @@ class Users extends Controller {
         $roles = new RolesModel();
 
         if (isset($_POST['department']) && isset($_POST['position']) && isset($_POST['email'])
-            && isset($_POST['phone']) && isset($_POST['startwork']) && isset($_POST['birthday'])) {
+            && isset($_POST['phone']) && isset($_POST['birthday'])) {
             $position = $_POST['position'];
             $department = $_POST['department'];
             $role = $_POST['role'];
             $email = $_POST['email'];
             $phone = $_POST['phone'];
             $birthday = $_POST['birthday'];
-            $birthday = date('Y-m-d', strtotime($birthday));
+            if ($birthday != ""){
+                $birthday = date('Y-m-d', strtotime($birthday));
+            } else {
+                $birthday = "0000-00-00";
+            }
+
             $startwork = $_POST['startwork'];
-            $startwork = date('Y-m-d', strtotime($startwork));
+            if ($startwork != ""){
+                $startwork = date('Y-m-d', strtotime($startwork));
+            } else {
+                $startwork = "0000-00-00";
+            }
+
             $endwork = $_POST['endwork'];
-            $endwork = date('Y-m-d', strtotime($endwork));
+            if ($endwork != ""){
+                $endwork = date('Y-m-d', strtotime($endwork));
+            } else {
+                $endwork = "0000-00-00";
+            }
+            var_dump($endwork);
 
             if (isset($_POST['is_shown'])){
                 $isShown = $_POST['is_shown'];
@@ -293,12 +308,25 @@ class Users extends Controller {
         if($editActionFlag){
             $id = $_GET['id'];
             $userInfo = $users->getUserInfo($id);
+            if ($userInfo['birthday'] == "0000-00-00"){
+                $userInfo['birthday'] = "";
+            }
+
+            if ($userInfo['startwork'] == "0000-00-00"){
+                $userInfo['startwork'] = "";
+            }
+
+            if ($userInfo['endwork'] == "0000-00-00"){
+                $userInfo['endwork'] = "";
+            }
+            $userRole = $users->getUserRoles($id);
             $this->render("Users/manage.tpl", array(
                 'userId' => $id,
                 'userInfo' => $userInfo,
                 'positions' => $sortedPositions,
                 'departments' => $sortedDepartments,
-                'roles' => $sortedRoles
+                'roles' => $sortedRoles,
+                'userRole' => $userRole
             ));
         } if(!$editActionFlag) {
             $this->render("Users/manage.tpl", array(
