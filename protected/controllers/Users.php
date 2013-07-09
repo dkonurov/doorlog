@@ -160,54 +160,54 @@ class Users extends Controller {
      * @return void
      */
     public function vacationAction(){
-        if(!Acl::checkPermission('timeoffs_add')){
+        if (!Acl::checkPermission('timeoffs_add')) {
             $this->render("errorAccess.tpl");
         }
-        $timeoffs = new UsersModel;
+        $userModel = new UsersModel;
         $id = $_POST['id'];
 
-        if(isset($_POST['from']) && isset($_POST['to']) && $_POST['from'] && $_POST['to']){
+        if (isset($_POST['from']) && isset($_POST['to']) && $_POST['from'] && $_POST['to']) {
             $from = $_POST['from'];
             $to = $_POST['to'];
             $type = $_POST['vtype'];
-            if($_POST['other_office']){
+            if ($_POST['other_office']) {
                 $time = $_POST['other_office'];
+            } else { 
+                $time = NULL;
             }
-            else $time = NULL;
 
             $dateStart = strtotime($from);
             $dateFinish = strtotime($to);
             $sumDays = floor(($dateFinish - $dateStart) / (3600 * 24));
 
             $checkTime=true;
-            $timeOffDate=$timeoffs->getTimeOffById($id);
-            if(isset($timeOffDate)){
-            for ($i=0; $i<=$sumDays;$i++){
-                for($k=0; $k<=count($timeOffDate); $k++){
-                    $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                    if($timeOffDate[$k]['date']==$date || $time<0 || $time>8){
-                        $checkTime=false;
+            $timeOffDate=$userModel->getTimeOffById($id);
+            if (isset($timeOffDate)) {
+                for ($i=0; $i<=$sumDays; $i++) {
+                    for ($k=0; $k<=count($timeOffDate); $k++) {
+                        $date =  date("o-m-d", $dateStart+((3600*24)*$i));
+                        if ($timeOffDate[$k]['date']==$date || $time<0 || $time>8) {
+                            $checkTime=false;
+                            break;
+                        }
+                    }
+                    if (!$checkTime) {
                         break;
                     }
                 }
-                if(!$checkTime){
-                    break;
-                }
-            }
             }
             
-            if($checkTime){
-            for($i=0; $i<=$sumDays; $i++){
-                $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                $res = $timeoffs->setTimeoffs($id, $type, $date, $time);
-            }
-            if ($res){
-                FlashMessages::addMessage("Отгул добавлен.", "success");
+            if ($checkTime) {
+                for ($i=0; $i<=$sumDays; $i++) {
+                    $date =  date("o-m-d", $dateStart+((3600*24)*$i));
+                    $res = $userModel->setTimeoffs($id, $type, $date, $time);
+                }
+                if ($res) {
+                    FlashMessages::addMessage("Отгул добавлен.", "success");
+                } else {
+                    FlashMessages::addMessage("Произошла ошибка. Отгул не был добавлен.", "error");
+                }
             } else {
-                FlashMessages::addMessage("Произошла ошибка. Отгул не был добавлен.", "error");
-            }
-            }
-            else {
                 FlashMessages::addMessage("Произошла ошибка. Отгул не был добавлен.", "error");
             }
         } else {

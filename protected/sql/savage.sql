@@ -196,10 +196,6 @@ CREATE TABLE `status` (
 -- Dumping data for table `status`
 --
 
-INSERT INTO `status` VALUES ( NULL, 'Командировка', '22');
-INSERT INTO `status` VALUES ( NULL, 'Из дома', '22');
-INSERT INTO `status` VALUES ( NULL, 'В другом офисе', '22');
-
 LOCK TABLES `status` WRITE;
 /*!40000 ALTER TABLE `status` DISABLE KEYS */;
 /*!40000 ALTER TABLE `status` ENABLE KEYS */;
@@ -275,7 +271,6 @@ CREATE TABLE `users_statuses` (
   `user_id` int(11) NOT NULL,
   `status_id` int(11) NOT NULL,
   `date` date NOT NULL,
-  `time` int(11) NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -490,7 +490,7 @@ class Users extends Model{
         }
     }
     
-    public function getTimeOffById($id){
+    public function getTimeOffByUserId($id){
         $params['id']=$id;
         $q= "SELECT date
             FROM users_statuses
