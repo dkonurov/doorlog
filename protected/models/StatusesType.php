@@ -8,11 +8,11 @@ namespace models;
 Class StatusesType 
 {
     
-    const HOLIDAY=1;
-    const SICK=2;
-    const TRIP=3;
-    const HOME=4;
-    const OTHER_OFFICE=5;
+    const HOLIDAY = 1;
+    const SICK = 2;
+    const TRIP = 3;
+    const HOME = 4;
+    const OTHER_OFFICE = 5;
     
     /**
      * get type of status
@@ -21,11 +21,11 @@ Class StatusesType
     public static function values()
     {
         return array (
-            self::HOLIDAY=>"Отгул",
-            self::SICK=>"Болел",
-            self::TRIP=>"Командировка",
-            self::HOME=>"Из дома",
-            self::OTHER_OFFICE=>"В другом офисе"
+            self::HOLIDAY => "Отгул",
+            self::SICK => "Болел",
+            self::TRIP => "Командировка",
+            self::HOME => "Из дома",
+            self::OTHER_OFFICE => "В другом офисе"
         );
     }
     
@@ -36,7 +36,7 @@ Class StatusesType
      */
     public static function getValue($status)
     {
-        $type=self::values();
+        $type = self::values();
         return $type[$status];
     }
     

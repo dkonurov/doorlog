@@ -15,7 +15,7 @@ class Status extends Model
     public function getAllType()
     {
         $q="SELECT type_id FROM `status`";
-        $result=$this->fetchAll($q);
+        $result = $this->fetchAll($q);
         return $result;
     }
     

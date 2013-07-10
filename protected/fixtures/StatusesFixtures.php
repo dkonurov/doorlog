@@ -18,22 +18,22 @@ Class StatusesFixtures extends Model
         
         $statuses = new Status();
         $type = StatusesType::values();
-        $statusDB=$statuses->getAllType();
+        $statusDB = $statuses->getAllType();
         foreach ($type as $status => $name) {
-            $chek=true;
+            $chek = true;
             if (isset($statusDB)) {
-                for ($i=0; $i<count($statusDB); $i++) {
-                    if ($status==$statusDB[$i]['type_id']) {
-                        $chek=false;
+                for ($i = 0; $i < count($statusDB); $i++) {
+                    if ($status == $statusDB[$i]['type_id']) {
+                        $chek = false;
                         break;
                     }
                 }
             }
             if ($chek) {
                 $q="INSERT INTO `status` VALUES('NULL', :type_id, :name, :time)";
-                $params['type_id']=$status;
-                $params['name']=$name;
-                $params['time']=8;
+                $params['type_id'] = $status;
+                $params['name'] = $name;
+                $params['time'] = 8;
                 $result=$this->execute($q, $params);
             }
         }
