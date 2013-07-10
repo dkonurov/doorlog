@@ -1,16 +1,25 @@
 <?php
 
 namespace models;
-use core\Db;
-use core\Model;
-Class StatusType {
+
+/**
+ * Class includes const and array name type of status
+ */
+Class StatusesType 
+{
+    
     const HOLIDAY=1;
     const SICK=2;
     const TRIP=3;
     const HOME=4;
     const OTHER_OFFICE=5;
     
-    public static function values(){
+    /**
+     * get type of status
+     * @return array type of status
+     */
+    public static function values()
+    {
         return array (
             self::HOLIDAY=>"Отгул",
             self::SICK=>"Болел",
@@ -20,8 +29,15 @@ Class StatusType {
         );
     }
     
-    public static function getValue($status){
-        return self::values()[$status];
+    /**
+     * get Value type of status
+     * @param integer $status
+     * @return integer type of status
+     */
+    public static function getValue($status)
+    {
+        $type=self::values();
+        return $type[$status];
     }
     
 }
