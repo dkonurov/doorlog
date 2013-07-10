@@ -30,9 +30,9 @@ Class StatusesType
     }
     
     /**
-     * get Value type of status
+     * get name of status
      * @param integer $status
-     * @return integer type of status
+     * @return string name of status
      */
     public static function getValue($status)
     {

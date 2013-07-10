@@ -173,21 +173,21 @@ class Users extends Controller {
             if ($_POST['other_office']) {
                 $time = $_POST['other_office'];
             } else { 
-                $time = NULL;
+                $addtime = $userModel->getTimeByTimeOffId($type);
+                $time = $addtime['addtime'];
             }
-
             $dateStart = strtotime($from);
             $dateFinish = strtotime($to);
             $sumDays = floor(($dateFinish - $dateStart) / (3600 * 24));
 
-            $checkTime=true;
-            $timeOffDate=$userModel->getTimeOffById($userId);
+            $checkTime = true;
+            $timeOffDate = $userModel->getTimeOffByUserId($userId);
             if (isset($timeOffDate)) {
-                for ($i=0; $i<=$sumDays; $i++) {
-                    for ($k=0; $k<=count($timeOffDate); $k++) {
+                for ($i = 0; $i <= $sumDays; $i++) {
+                    for ($k = 0; $k <= count($timeOffDate); $k++) {
                         $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                        if ($timeOffDate[$k]['date']==$date || $time<0 || $time>8) {
-                            $checkTime=false;
+                        if ($timeOffDate[$k]['date'] == $date || $time < 0 || $time > 8) {
+                            $checkTime = false;
                             break;
                         }
                     }
@@ -198,7 +198,7 @@ class Users extends Controller {
             }
             
             if ($checkTime) {
-                for ($i=0; $i<=$sumDays; $i++) {
+                for ($i = 0; $i <= $sumDays; $i++) {
                     $date =  date("o-m-d", $dateStart+((3600*24)*$i));
                     $res = $userModel->setTimeoffs($userId, $type, $date, $time);
                 }
