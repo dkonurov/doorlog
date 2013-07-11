@@ -525,7 +525,7 @@ class Users extends Model{
      * @param integer $type
      * @return array time
      */
-    public function getTimeByTimeOffId($type)
+    public function getTimeByType($type)
     {
         $q="SELECT addtime FROM `status` WHERE id=:type";
         $params['type'] = $type;
