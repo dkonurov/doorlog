@@ -11,7 +11,7 @@
         <label for="timeoff_type"> Тип: </label>
         <select id="timeoff_type" name = "vtype">
             {foreach from=$statuses item=stat}
-                <option value = "{$stat['id']}"> {$stat['name']} </option>
+                <option value = "{$stat['type_id']}"> {$stat['name']} </option>
             {/foreach}
         </select>
         <div id="office">
