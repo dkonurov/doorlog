@@ -2,9 +2,9 @@
 {block name="javascript"}
     <script src="{$_root}/assets/js/rangeDatepicker.js"></script>
     <script>
-        var OTHER_OFFICE={$otherOffice}
+        var otherOffice={$otherOffice}
     </script>
-    <script src="{$_root}/assets/js/userProfileAutocomplete.js"></script> 
+    <script src="{$_root}/assets/js/userProfileAutocomplete.js"></script>
 {/block}
 {block name="title"}Настройки профиля{/block}
 

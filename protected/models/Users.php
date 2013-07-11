@@ -527,7 +527,7 @@ class Users extends Model{
      */
     public function getTimeByType($type)
     {
-        $q="SELECT addtime FROM `status` WHERE id=:type";
+        $q="SELECT addtime FROM `status` WHERE type_id=:type";
         $params['type'] = $type;
         $result = $this->fetchOne($q, $params);
         return $result;
