@@ -107,11 +107,14 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function insertUsers($user, $email, $hash, $salt, $position, $department, $tel, $bday, $swork, $ework, $is_shown, $halftime){
-        $add="INSERT INTO user(personal_id, position_id, email, password, salt, department_id, created, birthday, startwork, endwork, phone, is_shown, halftime)
-            VALUES (:user,:position,:email,:hash,:salt,:department, NOW(), :bday, :startwork, :endwork, :tel, :is_shown, :halftime)";
+    public function insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $tel, $bday, $swork, $ework, $is_shown, $halftime){
+        $add="INSERT INTO user(personal_id, first_name, second_name, middle_name, position_id, email, password, salt, department_id, created, birthday, startwork, endwork, phone, is_shown, halftime)
+            VALUES (:user, :firstName, :secondName, :middleName, :position,:email,:hash,:salt,:department, NOW(), :bday, :startwork, :endwork, :tel, :is_shown, :halftime)";
         $params=array();
         $params['user'] = $user;
+        $params['secondName'] = $secondName;
+        $params['firstName'] = $firstName;
+        $params['middleName'] = $middleName;
         $params['position'] = $position;
         $params['email'] = $email;
         $params['hash'] = $hash;
@@ -267,6 +270,9 @@ class Users extends Model{
         $q = "SELECT
               u.id,
               u.personal_id,
+              u.first_name,
+              u.second_name,
+              u.middle_name,
               u.position_id,
               u.department_id,
               u.password,
@@ -421,9 +427,12 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function editUser($id, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $is_shown, $halftime){
+    public function editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $is_shown, $halftime){
         $params = array();
         $params['id'] = $id;
+        $params['secondName'] = $secondName;
+        $params['firstName'] = $firstName;
+        $params['middleName'] = $middleName;
         $params['position'] = $position;
         $params['email'] = $email;
         $params['department'] = $department;
@@ -435,6 +444,9 @@ class Users extends Model{
         $params['halftime'] = $halftime;
         $q= "UPDATE user
             SET position_id = (:position),
+            second_name = (:secondName),
+            first_name = (:firstName),
+            middle_name = (:middleName),
             email = (:email),
             department_id = (:department),
             birthday = (:birthday),
