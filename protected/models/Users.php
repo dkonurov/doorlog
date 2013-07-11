@@ -519,4 +519,17 @@ class Users extends Model{
         $result = $this->fetchAll($q, $params);
         return $result;
     }
+    
+    /**
+     * Get time by timeoffs id
+     * @param integer $type
+     * @return array time
+     */
+    public function getTimeByType($type)
+    {
+        $q="SELECT addtime FROM `status` WHERE type_id=:type";
+        $params['type'] = $type;
+        $result = $this->fetchOne($q, $params);
+        return $result;
+    }
 }

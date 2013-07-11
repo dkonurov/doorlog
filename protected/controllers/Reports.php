@@ -211,6 +211,7 @@ class Reports extends Controller {
         foreach ($timeoffs as $timeOff) {
             $timeoffsArray[$timeOff['date']]['name'] = $timeOff['name'];
             $timeoffsArray[$timeOff['date']]['type'] = $timeOff['id'];
+            $timeoffsArray[$timeOff['date']]['time'] = $timeOff['addtime']*3600;
         }
 
         foreach ($vacation as $curr) {
@@ -239,9 +240,8 @@ class Reports extends Controller {
                     $oneDay['timeoffName'] = $timeoffsArray[$currentDate]['name'];
                     $oneDay['dayType'] = (int)$currVacation[$currentDate]['type'];
                     $oneDay['timeoffType'] = $timeoffsArray[$currentDate]['type'];
-                }
-
-                if(isset($userMonthTimeArray[$currentDate])){
+                    $oneDay['time'] = $timeoffsArray[$currentDate]['time'];
+                } else if (isset($userMonthTimeArray[$currentDate])) {
                     $oneDay['timeoffName'] = '--';
                     $oneDay['time'] = $userMonthTimeArray[$currentDate]['time'];
                 }

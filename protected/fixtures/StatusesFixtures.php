@@ -33,7 +33,11 @@ Class StatusesFixtures extends Model
                 $q="INSERT INTO `status` VALUES('NULL', :type_id, :name, :time)";
                 $params['type_id'] = $status;
                 $params['name'] = $name;
-                $params['time'] = 8;
+                if ($status == StatusesType::HOLIDAY || $status == StatusesType::SICK) {
+                    $params['time'] = 0;
+                } else {
+                    $params['time'] = 8;
+                }
                 $result=$this->execute($q, $params);
             }
         }
