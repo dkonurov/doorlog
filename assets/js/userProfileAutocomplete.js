@@ -4,7 +4,7 @@ $(document).ready(function () {
         }
         $("select#timeoff_type").change(function(){
             selectedVal = $(this).find(":selected").val();
-            if (selectedVal == 5) {
+            if (selectedVal == OTHER_OFFICE) {
                 $("div#office").show();
             }
             else{

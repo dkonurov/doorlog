@@ -4,6 +4,7 @@ namespace controllers;
 
 use core\Controller;
 use models\Users as UsersModel;
+use models\StatusesType;
 use core\Utils;
 use core\FlashMessages;
 use core\Authentication;
@@ -498,7 +499,7 @@ class Users extends Controller {
                 }
             }
             $statuses = $user->getUserStatuses();
-            $this->render("Users/profile.tpl", array('userInfo' => $profileUserInfo, 'isOwner'=>$isOwner, 'statuses'=>$statuses, 'id'=>$profileUserId));
+            $this->render("Users/profile.tpl", array('userInfo' => $profileUserInfo, 'isOwner' => $isOwner, 'statuses' => $statuses, 'id' => $profileUserId, 'otherOffice' => StatusesType::OTHER_OFFICE));
         } else {
             $this->render("errorAccess.tpl");
         }
