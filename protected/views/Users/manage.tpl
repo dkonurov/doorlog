@@ -139,7 +139,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>На полствки </td>
+                        <td>На полставки </td>
                         <td>
                             {if isset($userId)}
                                 <p><input name="halftime" type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
