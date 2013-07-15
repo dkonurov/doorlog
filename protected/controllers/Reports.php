@@ -270,7 +270,15 @@ class Reports extends Controller {
                 $monthReport = $this->getMonthReport($currentUser['id'], $date);
 
                 $timesheet[$countUsers]['user_id'] = $currentUser['id'];
-                $timesheet[$countUsers]['name'] = $currentUser['name'];
+
+                $totalUserInfo = $user->getUserInfo($currentUser['id']);
+
+                $firstName = $totalUserInfo['first_name'];
+                $secondName = $totalUserInfo['second_name'];
+                $middleName = $totalUserInfo['middle_name'];
+
+                $fullName = $secondName .' '.substr($secondName, 0, 2).'. '.substr($middleName, 0,2).'.';
+                $timesheet[$countUsers]['name'] = $fullName;
                 $timesheet[$countUsers]['position'] = $currentUser['position'];
                 $timesheet[$countUsers]['report'] = $monthReport;
                 $countUsers++;
