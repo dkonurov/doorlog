@@ -363,6 +363,9 @@ class Users extends Controller {
     /**
      * This function add user in base
      * @param integer $user
+     * @param string secondName
+     * @param string firstName
+     * @param string middleName
      * @param string $email
      * @param integer $position
      * @param integer $role
@@ -390,6 +393,9 @@ class Users extends Controller {
     /**
      * This function update user in base
      * @param integer $id
+     * @param string secondName
+     * @param string firstName
+     * @param string middleName
      * @param integer $position
      * @param integer $role
      * @param string $email

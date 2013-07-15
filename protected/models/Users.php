@@ -97,6 +97,9 @@ class Users extends Model{
     /**
      * Add new user
      * @param string $user
+     * @param string secondName
+     * @param string firstName
+     * @param string middleName
      * @param string $email
      * @param string $hash
      * @param string $salt
@@ -419,6 +422,9 @@ class Users extends Model{
     /**
      * Edit current user
      * @param integer $id
+     * @param string secondName
+     * @param string firstName
+     * @param string middleName
      * @param integer $position
      * @param string $email
      * @param integer $department
