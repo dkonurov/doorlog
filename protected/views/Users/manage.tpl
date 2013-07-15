@@ -22,6 +22,7 @@
 
     {block name="javascript"}
         <script src="{$_root}/assets/js/birthdayDatepicker.js"></script>
+        <script src="{$_root}/assets/js/manage.js"></script>
     {/block}
 
     {block name="pagetitle"}
@@ -42,25 +43,37 @@
                         <tr>
                             <td>Пользователь</td>
                             <td>
-                                <select form='user' name="userId">
+                                <select form='user' name="userId" id="userId">
                                     {html_options options=$users}
                                 </select>
                             </td>
                         </tr>
                     {/if}
                     <tr>
-                        <td>Отдел</td>
+                        <td>Фамилия*</td>
+                        <td><input type="text" value="{if isset($userId)}{$userInfo['second_name']}{/if}" name="secondName" id="secondName"></td>
+                    </tr>
+                    <tr>
+                        <td>Имя*</td>
+                        <td><input type="text" value="{if isset($userId)}{$userInfo['first_name']}{/if}" name="firstName" id="firstName"></td>
+                    </tr>
+                    <tr>
+                        <td>Отчество*</td>
+                        <td><input type="text" name="middleName" value="{if isset($userId)}{$userInfo['middle_name']}{/if}" id="middleName"></td>
+                    </tr>
+                    <tr>
+                        <td>Отдел*</td>
                         <td>
-                            <select form='user' name="department">
+                            <select form='user' name="department" id="department">
                                 <option value=0></option>
                                 {html_options options=$departments selected={$userInfo['department_id']}}
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <td>Должность</td>
+                        <td>Должность*</td>
                         <td>
-                            <select name="position">
+                            <select name="position" id="position">
                                 <option value=0></option>
                                 {html_options options=$positions selected={$userInfo['position_id']}}
                             </select>
@@ -75,18 +88,18 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Email</td>
+                        <td>Email*</td>
                         <td>
-                            <input type="text" maxlength="45" size="40" name="email"
+                            <input type="text" maxlength="45" size="40" name="email" id="email"
                                 {if isset($userId)}
                                 value={$userInfo['email']}
                             {/if}/>
                         </td>
                     </tr>
                     <tr>
-                        <td>Телефон</td>
+                        <td>Телефон*</td>
                         <td>
-                            <input type="text" maxlength="11" name="phone"
+                            <input type="text" maxlength="11" name="phone" id="phone"
                             {if isset($userId)}
                             value={$userInfo['phone']}
                             {/if}/>
@@ -126,7 +139,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>На полствки </td>
+                        <td>На полставки </td>
                         <td>
                             {if isset($userId)}
                                 <p><input name="halftime" type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>

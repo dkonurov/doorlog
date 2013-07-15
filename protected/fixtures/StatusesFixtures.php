@@ -41,6 +41,5 @@ Class StatusesFixtures extends Model
                 $result=$this->execute($q, $params);
             }
         }
-    }
-    
+    }   
 }
