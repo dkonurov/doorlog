@@ -25,25 +25,19 @@
         <td rowspan='3'> Табельный номер </td>
         <td colspan='16'> Отметки о явках и неявках на работу по числам месяца </td>
     </tr>
-    <tr>
-            {for $day=1 to 9}
+    <tr>    {for $day = 1 to 15}
                 {if $days[$day-1] == 0}
                     <td>
                 {else}
                     <td bgcolor='red'>
                 {/if}
-                 0{$day} </td>
-            {/for}
-            {for $day=10 to 15}
-                {if $days[$day-1] == 0}
-                    <td>
+                {if $day < 10}
+                    0{$day} </td>
                 {else}
-                    <td bgcolor='red'>
+                    {$day} </td>
                 {/if}
-                {$day} </td>
             {/for}
            <td>
-
     </tr>
     <tr>
             {for $day=16 to $dayCount}

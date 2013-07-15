@@ -280,7 +280,7 @@ class Reports extends Controller {
         $allHolidays = $holidays->getAllDays($date);
         $days = array();
         foreach ($allHolidays as $oneDay) {
-            $days[] = $oneDay['trigger'];
+            $days[] = $oneDay['type'];
         }
         $date = date('m.Y', strtotime($date));
         $this->render("Reports/timesheet.tpl" , array('timesheet' => $timesheet,'days'=> $days,'date'=> $date, 'dayCount' => $dayCount));
