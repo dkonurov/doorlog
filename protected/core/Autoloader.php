@@ -111,4 +111,33 @@ class Autoloader {
             }
         }
     }
+
+    /**
+     * scan dir and add return objects of this class
+     * Example :
+     *         LoadClassForDir('fixtures')
+     *         return objects[0] = new fixtures\StatusesFixutres() 
+     * @param string $path
+     * @return array objects
+     */
+    public function loadClassForDir($path)
+    {
+        $objects = array();
+        $dir = $this->_includePath . "/" . $path;
+        if (is_dir($dir)) {
+            $files = scandir($dir);
+            foreach ($files as $file) {
+                if ($file != "." && $file != "..") {
+                    if (substr_count($file, $this->_fileExtension) != 0) {
+                        $file = substr($file, 0, -4);
+                        $class = $path . $this->_namespaceSeparator . $file;
+                        if (class_exists($class)) {
+                            $objects[] = new $class;
+                        }
+                    }
+                }
+            }
+        }
+        return $objects;
+    }
 }
