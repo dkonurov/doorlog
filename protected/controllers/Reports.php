@@ -9,8 +9,21 @@ use models\Reports as ReportsModel;
 use controllers\Main as Time;
 use models\Holidays;
 use core\Utils;
+use models\Status;
 
 class Reports extends Controller {
+/*
+    define("FULLDAY", 8);
+    define("SHORTDAY", 7);
+    define("FULLDAYHALFWORK", 4);
+    define("SHORTDAYHALFWORK", 3);
+    define("NULLDAY", 0);
+    */
+    const FULLDAY = 8;
+    const SHORTDAY = 7;
+    const FULLDAYHALFWORK = 4;
+    const SHORTDAYHALFWORK = 3;
+    const NULLDAY = 0;
 
     /**
     * Render page of reports by user or all users in current department
@@ -280,7 +293,8 @@ class Reports extends Controller {
                 $fullName = $secondName .' '.substr($secondName, 0, 2).'. '.substr($middleName, 0,2).'.';
                 $timesheet[$countUsers]['name'] = $fullName;
                 $timesheet[$countUsers]['position'] = $currentUser['position'];
-                $timesheet[$countUsers]['report'] = $monthReport;
+                $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
+
                 $countUsers++;
             }
         }
@@ -292,5 +306,70 @@ class Reports extends Controller {
         }
         $date = date('m.Y', strtotime($date));
         $this->render("Reports/timesheet.tpl" , array('timesheet' => $timesheet,'days'=> $days,'date'=> $date, 'dayCount' => $dayCount));
+    }
+
+    private function getOfficalTimeForTimesheet($id, $date){
+        $report = array();
+        $statusesTime = array();
+        $holiday = new Holidays();
+        $user = new UsersModel();
+        $statuses = new Status();
+
+        $monthDay = $holiday->getMonthDays($date);//Y-m
+        $monthHoliday = $holiday->getAllDays($date);//Y-m
+        $totalUserInfo = $user->getUserInfo($id);
+        $holidayTimeMinus = $holiday->getAllType();
+        $monthTimeOffs = $user->getTimeoffsByUserId($id, $date);//Y-m
+        $allStatuses = $statuses->getAllTypeFullInfo();
+
+        //Время для ув причин
+        for ($i=0, $arrSize = count($allStatuses); $i < $arrSize; $i++) { 
+            $statusesTime[$allStatuses[$i]['type_id']] = $allStatuses[$i]['addtime'];
+        }
+
+        $HALFWORK = $totalUserInfo['halftime'];
+
+        //По дефолту проставляем макс время
+        for ($i=0, $arrSize = count($monthDay); $i < $arrSize; $i++) { 
+            $date = date('Y-m-d', strtotime($monthDay[$i]['date']));
+            if (!$HALFWORK){
+                $report[$date]['time'] = 8;
+                $report[$date]['dayType'] = 0;
+            } else {
+                $report[$date]['time'] = 4;
+                $report[$date]['dayType'] = 0;
+            }
+        }
+
+        //Проставляем отгулы и командировки (отсутствие по ув причине)
+        for ($i=0, $arrSize = count($monthTimeOffs); $i < $arrSize; $i++) { 
+            $correctDate = $monthTimeOffs[$i]['date'];
+            if (!$HALFWORK){
+                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
+            } else {
+                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
+            }
+        }
+
+        //Проставляем выходные и короткие дни 
+        for ($i=0, $arrSize = count($monthHoliday); $i < $arrSize; $i++) { 
+            $correctDate = date('Y-m-d',strtotime($monthHoliday[$i]['date']));
+            switch ($monthHoliday[$i]['type']) {
+                case 1:
+                    $report[$correctDate]['time'] = self::NULLDAY;
+                    $report[$correctDate]['dayType'] = 1;
+                    break;
+                case 2:
+                    if (!$HALFWORK){
+                        $report[$correctDate]['time'] = self::SHORTDAY;
+                    } else {
+                        $report[$correctDate]['time'] = self::SHORTDAYHALFWORK;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $report;
     }
 }

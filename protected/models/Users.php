@@ -391,14 +391,13 @@ class Users extends Model{
     /**
      * Get timeoff for current user by id
      * @param integer $userId
+     * @param string $date
      * @param integer $type
-     * @param string $data
      * @return array
      */
-    public function getTimeoffsByUserId($userId, $date, $type){
-
-        $date1 = date("y-m-d", strtotime($date));
-        $date2 = date("y-m-d", (strtotime($date) + 30*24*60*60 ));
+    public function getTimeoffsByUserId($userId, $date, $type = 0){
+        $date1 = date("Y-m-d", strtotime($date));
+        $date2 = date("Y-m-d", (strtotime($date) + 30*24*60*60 ));
         $params = array();
         $params['id'] = $userId;
         $params['date1'] = $date1;
@@ -409,12 +408,13 @@ class Users extends Model{
         WHERE u.user_id in
         (SELECT id FROM user WHERE id = :id AND is_shown = 1 )
         AND u.date
-        BETWEEN :date1 AND :date2 " ;
-
+        BETWEEN :date1 AND :date2 ";
+        
         if($type){
             $params['type'] = $type;
             $q = $q." AND u.status_id = :type";
         }
+        
         $result = $this->fetchAll($q, $params);
         return $result;
     }
