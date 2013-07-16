@@ -120,14 +120,19 @@ class Autoloader {
     public function loadClassForDir($path)
     {
         $objects = array();
-        if (is_dir($path)) {
-            $files = scandir($path);
-            array_shift($files);
-            array_shift($files);
+        $dir = $this->_includePath . "/" . $path;
+        if (is_dir($dir)) {
+            $files = scandir($dir);
             foreach ($files as $file) {
-                $file = substr($file, 0, -4);
-                $file = "fixtures\\".$file;
-                $objects[]= new $file;
+                if ($file != "." && $file != "..") {
+                    if (substr_count($file, $this->_fileExtension) != 0) {
+                        $file = substr($file, 0, -4);
+                        $class = $path . $this->_namespaceSeparator . $file;
+                        if (class_exists($class)) {
+                            $objects[] = new $class;
+                        }
+                    }
+                }
             }
         }
         return $objects;
