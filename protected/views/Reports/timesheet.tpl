@@ -62,13 +62,9 @@
                {foreach from=$currentUser['report'] item=report}
                {if $partitionDate <= 15}
                     {if $report['dayType'] == 0}
-                        {if $report['time'] == 0}
-                            <td id = 'workday'> Н </td>
-                        {else}
-                            <td id = 'workday'> Я </td>
-                        {/if}
+                        <td id = 'workday'> {$report['status_name']} </td>
                     {else}
-                        <td bgcolor='red'> В </td>
+                        <td bgcolor='red'> {$report['status_name']} </td>
                     {/if}
                 {$partitionDate=$partitionDate+1}
                 {/if}
@@ -80,7 +76,7 @@
             {foreach from=$currentUser['report'] item=report}
             {if $partitionDate <= 15}
                 {if $report['dayType'] == 0}
-                    <td id = 'workday'> {$report['time']} </td>
+                        <td id = 'workday'> {$report['time']} </td>
                 {else}
                     <td bgcolor='red'> {$report['time']} </td>
                 {/if}
@@ -94,13 +90,9 @@
             {foreach from=$currentUser['report'] item=report}
                {if $partitionDate > 15}
                     {if $report['dayType'] == 0}
-                        {if $report['time'] == 0}
-                            <td id = 'workday'> Н </td>
-                        {else}
-                            <td id = 'workday'> Я </td>
-                        {/if}
+                        <td id = 'workday'> {$report['status_name']} </td>
                     {else}
-                        <td bgcolor='red'> В </td>
+                        <td bgcolor='red'> {$report['status_name']} </td>
                     {/if}
                 {/if}
                 {$partitionDate=$partitionDate+1}

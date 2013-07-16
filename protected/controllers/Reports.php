@@ -10,20 +10,15 @@ use controllers\Main as Time;
 use models\Holidays;
 use core\Utils;
 use models\Status;
+use models\StatusesType;
 
 class Reports extends Controller {
-/*
-    define("FULLDAY", 8);
-    define("SHORTDAY", 7);
-    define("FULLDAYHALFWORK", 4);
-    define("SHORTDAYHALFWORK", 3);
-    define("NULLDAY", 0);
-    */
+
     const FULLDAY = 8;
     const SHORTDAY = 7;
     const FULLDAYHALFWORK = 4;
     const SHORTDAYHALFWORK = 3;
-    const NULLDAY = 0;
+    const NULLDAY = "";
 
     /**
     * Render page of reports by user or all users in current department
@@ -294,7 +289,6 @@ class Reports extends Controller {
                 $timesheet[$countUsers]['name'] = $fullName;
                 $timesheet[$countUsers]['position'] = $currentUser['position'];
                 $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
-
                 $countUsers++;
             }
         }
@@ -322,52 +316,101 @@ class Reports extends Controller {
         $monthTimeOffs = $user->getTimeoffsByUserId($id, $date);//Y-m
         $allStatuses = $statuses->getAllTypeFullInfo();
 
+        $expectedTime = $this->getMonthReport($id, $date);//Y-m был в офисе
+
         //Время для ув причин
-        for ($i=0, $arrSize = count($allStatuses); $i < $arrSize; $i++) { 
+        for ($i=0, $arrSize = count($allStatuses); $i < $arrSize; $i++) {
             $statusesTime[$allStatuses[$i]['type_id']] = $allStatuses[$i]['addtime'];
         }
 
-        $HALFWORK = $totalUserInfo['halftime'];
+        $isHalfWork = $totalUserInfo['halftime'];
+        $startWork = $totalUserInfo['startwork'];
+        if ($startWork != '0000-00-00'){
+            $startWork = date('Y-m-d', $startWork);
+        }
+        $endWork = $totalUserInfo['endwork'];
+        if ($endWork != '0000-00-00'){
+            $endWork = date('Y-m-d', $endWork);
+        }
 
-        //По дефолту проставляем макс время
-        for ($i=0, $arrSize = count($monthDay); $i < $arrSize; $i++) { 
+        //Массив с ключами-датами хранит время и тип дня (если чел заходил в офис ставим 8 или 4)
+        for ($i=0, $arrSize = count($monthDay); $i < $arrSize; $i++) {
             $date = date('Y-m-d', strtotime($monthDay[$i]['date']));
-            if (!$HALFWORK){
-                $report[$date]['time'] = 8;
-                $report[$date]['dayType'] = 0;
+            $report[$date]['dayType'] = 0;
+            $report[$date]['status_id'] = 0;
+            if ( $expectedTime[$date]['time'] != 0 and !$isHalfWork ) {
+                $report[$date]['time'] = self::FULLDAY;
+                $report[$date]['status_name'] = 'Я';
+            } elseif ( $expectedTime[$date]['time'] != 0 and $isHalfWork ) {
+                $report[$date]['time'] = self::FULLDAYHALFWORK;
+                $report[$date]['status_name'] = 'Я';
             } else {
-                $report[$date]['time'] = 4;
-                $report[$date]['dayType'] = 0;
+                $report[$date]['time'] = self::NULLDAY;
+                $report[$date]['status_name'] = 'Н';
             }
         }
 
-        //Проставляем отгулы и командировки (отсутствие по ув причине)
-        for ($i=0, $arrSize = count($monthTimeOffs); $i < $arrSize; $i++) { 
+        $statusesType = new StatusesType();
+
+        //Проставляем отгулы и командировки (отсутствие по ув причине), тип отгула
+        for ($i=0, $arrSize = count($monthTimeOffs); $i < $arrSize; $i++) {
             $correctDate = $monthTimeOffs[$i]['date'];
-            if (!$HALFWORK){
+            if (!$isHalfWork){
                 $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
             } else {
                 $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
             }
+            switch ($monthTimeOffs[$i]['status_id']) {
+                case StatusesType::SICK:
+                    $report[$correctDate]['status_name'] = 'Б';
+                    break;
+                case StatusesType::VACATION:
+                    $report[$correctDate]['status_name'] = 'От';
+                    break;
+                case StatusesType::TRIP:
+                    $report[$correctDate]['status_name'] = 'К';
+                    break;
+                default:
+                    break;
+            }
+            $report[$correctDate]['status_id'] = $monthTimeOffs[$i]['status_id'];
         }
-
-        //Проставляем выходные и короткие дни 
-        for ($i=0, $arrSize = count($monthHoliday); $i < $arrSize; $i++) { 
+        
+        //Проставляем выходные и короткие дни
+        for ($i=0, $arrSize = count($monthHoliday); $i < $arrSize; $i++) {
             $correctDate = date('Y-m-d',strtotime($monthHoliday[$i]['date']));
             switch ($monthHoliday[$i]['type']) {
                 case 1:
                     $report[$correctDate]['time'] = self::NULLDAY;
                     $report[$correctDate]['dayType'] = 1;
+                    $report[$correctDate]['status_name'] = "В";
                     break;
                 case 2:
-                    if (!$HALFWORK){
+                    if (!$isHalfWork and $report[$correctDate]['time'] != 0){
                         $report[$correctDate]['time'] = self::SHORTDAY;
-                    } else {
+                    } elseif ($isHalfWork and $report[$correctDate]['time'] != 0) {
                         $report[$correctDate]['time'] = self::SHORTDAYHALFWORK;
                     }
                     break;
                 default:
                     break;
+            }
+        }
+
+        //Удаление инфы из массива если даты устройства или увольнения в месяце отчета
+        foreach ($report as $currDate => $valDate) {
+            if ( strtotime($currDate) < strtotime($startWork) && $startWork != '0000-00-00' ){
+                $report[$currDate]['status_name'] = '';
+                $report[$currDate]['time'] = '';
+                $report[$currDate]['status_id'] = '';
+            }
+        }
+
+        foreach ($report as $currDate => $valDate) {
+            if ( strtotime($currDate) > strtotime($endWork) && $endWork != '0000-00-00' ){
+                $report[$currDate]['status_name'] = '';
+                $report[$currDate]['time'] = '';
+                $report[$currDate]['status_id'] = '';
             }
         }
         return $report;
