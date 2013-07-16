@@ -12,7 +12,9 @@
     {block name="content"}
         <div class='span10'>
             {if 'users_add'|checkPermission}
-                <a href="{$_root}/users/manage">Добавить пользователя</a>
+                <a class="btn btn-primary" href="{$_root}/users/manage">Добавить</a>
+                <br/>
+                <br/>
             {/if}
             <table class="table table-bordered">
                 <thead>
@@ -25,9 +27,9 @@
                 <tbody>
                     {$num=10*$currentPage-9}
                     {foreach from=$users item=user}
-                        <tr>
+                        <tr onclick="window.location='{$_root}/users/manage?id={$user['id']}'" style="cursor: pointer">
                             <td>{$num}</td>
-                            <td> <a href="{$_root}/users/manage?id={$user['id']}"> {$user['name']} </a></td>
+                            <td> {$user['name']} </td>
                             <td> {$user['email']} </td>
                             <td> {$user['department']} </td>
                             <td> {$user['position']} </td>
