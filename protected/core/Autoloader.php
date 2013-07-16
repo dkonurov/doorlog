@@ -117,7 +117,8 @@ class Autoloader {
      * @param string $path
      * @return array objects
      */
-    public function loadClassForDir($path){
+    public function loadClassForDir($path)
+    {
         $objects = array();
         if (is_dir($path)) {
             $files = scandir($path);
