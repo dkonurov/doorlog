@@ -113,7 +113,10 @@ class Autoloader {
     }
 
     /**
-     * scan dir "fixtures" and create objects for fixtures
+     * scan dir and add return objects of this class
+     * Example :
+     *         LoadClassForDir('fixtures')
+     *         return objects[0] = new fixtures\StatusesFixutres() 
      * @param string $path
      * @return array objects
      */
