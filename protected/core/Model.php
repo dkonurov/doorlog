@@ -58,11 +58,11 @@ abstract class Model {
     protected function execute($queryString, $params = array()){
         $db = Db::getInstance();
         $stmt = $db->prepare($queryString);
-        if (!stmt) {
+        if (!$stmt) {
             throw new \Exception("error prepare statement '$queryString'");
         }
         $ans = $stmt->execute($params);
-        if (!ans) {
+        if (!$ans) {
             throw new \Exception("error execute '$queryString', '{${var_export($params)}}'");
         }
         return $ans;
