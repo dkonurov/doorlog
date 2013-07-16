@@ -285,7 +285,7 @@ class Reports extends Controller {
                 $secondName = $totalUserInfo['second_name'];
                 $middleName = $totalUserInfo['middle_name'];
 
-                $fullName = $secondName .' '.substr($secondName, 0, 2).'. '.substr($middleName, 0,2).'.';
+                $fullName = $secondName .' '.substr($firstName, 0, 2).'. '.substr($middleName, 0,2).'.';
                 $timesheet[$countUsers]['name'] = $fullName;
                 $timesheet[$countUsers]['position'] = $currentUser['position'];
                 $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
