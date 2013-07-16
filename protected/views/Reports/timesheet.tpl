@@ -25,25 +25,19 @@
         <td rowspan='3'> Табельный номер </td>
         <td colspan='16'> Отметки о явках и неявках на работу по числам месяца </td>
     </tr>
-    <tr>
-            {for $day=1 to 9}
+    <tr>    {for $day = 1 to 15}
                 {if $days[$day-1] == 0}
                     <td>
                 {else}
                     <td bgcolor='red'>
                 {/if}
-                 0{$day} </td>
-            {/for}
-            {for $day=10 to 15}
-                {if $days[$day-1] == 0}
-                    <td>
+                {if $day < 10}
+                    0{$day} </td>
                 {else}
-                    <td bgcolor='red'>
+                    {$day} </td>
                 {/if}
-                {$day} </td>
             {/for}
            <td>
-
     </tr>
     <tr>
             {for $day=16 to $dayCount}
@@ -75,7 +69,7 @@
                         {/if}
                     {else}
                         <td bgcolor='red'> В </td>
-                    {/if} 
+                    {/if}
                 {$partitionDate=$partitionDate+1}
                 {/if}
                 {/foreach}
@@ -86,14 +80,10 @@
             {foreach from=$currentUser['report'] item=report}
             {if $partitionDate <= 15}
                 {if $report['dayType'] == 0}
-                    {if $report['time'] == 0}
-                        <td id = 'workday'>  </td>
-                    {else}
-                        <td id = 'workday'> {$report['time']|date_format:"%H:%M"} </td>
-                    {/if}
+                    <td id = 'workday'> {$report['time']} </td>
                 {else}
-                    <td bgcolor='red'> {$report['time']|date_format:"%H:%M"} </td>
-                {/if} 
+                    <td bgcolor='red'> {$report['time']} </td>
+                {/if}
             {$partitionDate=$partitionDate+1}
             {/if}
             {/foreach}
@@ -124,13 +114,9 @@
             {foreach from=$currentUser['report'] item=report}
                {if $partitionDate > 15}
                     {if $report['dayType'] == 0}
-                        {if $report['time'] == 0}
-                            <td id = 'workday'>  </td>
-                        {else}
-                            <td id = 'workday'> {$report['time']|date_format:"%H:%M"} </td>
-                        {/if}
+                        <td id = 'workday'> {$report['time']} </td>
                     {else}
-                        <td bgcolor='red'> {$report['time']|date_format:"%H:%M"} </td>
+                        <td bgcolor='red'> {$report['time']} </td>
                     {/if}
                 {/if}
                 {$partitionDate=$partitionDate+1}

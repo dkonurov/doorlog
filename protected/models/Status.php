@@ -18,5 +18,11 @@ class Status extends Model
         $result = $this->fetchAll($q);
         return $result;
     }
-    
+
+    public function getAllTypeFullInfo()
+    {
+        $q="SELECT * FROM `status`";
+        $result = $this->fetchAll($q);
+        return $result;
+    }
 }
