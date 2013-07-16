@@ -111,7 +111,12 @@ class Autoloader {
             }
         }
     }
-    
+
+    /**
+     * scan dir "fixtures" and create objects for fixtures
+     * @param string $path
+     * @return array objects
+     */
     public function loadClassForDir($path){
         $objects = array();
         if (is_dir($path)) {
