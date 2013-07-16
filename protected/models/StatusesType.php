@@ -13,6 +13,7 @@ Class StatusesType
     const TRIP = 3;
     const HOME = 4;
     const OTHER_OFFICE = 5;
+    const VACATION = 6;
     
     /**
      * get type of status
@@ -25,7 +26,8 @@ Class StatusesType
             self::SICK => "Болел",
             self::TRIP => "Командировка",
             self::HOME => "Из дома",
-            self::OTHER_OFFICE => "В другом офисе"
+            self::OTHER_OFFICE => "В другом офисе",
+            self::VACATION => "Отпуск",
         );
     }
     
