@@ -187,7 +187,7 @@ class Users extends Controller {
                 for ($i = 0; $i <= $sumDays; $i++) {
                     for ($k = 0; $k <= count($timeOffDate); $k++) {
                         $date =  date("o-m-d", $dateStart+((3600*24)*$i));
-                        if ($timeOffDate[$k]['date'] == $date || $time < 0 || $time > 8) {
+                        if ($timeOffDate[$k]['date'] == $date) {
                             $checkTime = false;
                             break;
                         }
@@ -197,19 +197,23 @@ class Users extends Controller {
                     }
                 }
             }
-            
+
             if ($checkTime) {
+                $userModel->startTransaction();
+                try {
                 for ($i = 0; $i <= $sumDays; $i++) {
                     $date =  date("o-m-d", $dateStart+((3600*24)*$i));
                     $res = $userModel->setTimeoffs($userId, $type, $date, $time);
                 }
-                if ($res) {
-                    FlashMessages::addMessage("Отгул добавлен.", "success");
-                } else {
+                
+                $userModel->commit();
+                FlashMessages::addMessage("Отгул добавлен.", "success");
+                } catch(\Exception $e) {
+                    $userModel->rollBack();
                     FlashMessages::addMessage("Произошла ошибка. Отгул не был добавлен.", "error");
                 }
             } else {
-                FlashMessages::addMessage("Произошла ошибка. Отгул не был добавлен.", "error");
+                FlashMessages::addMessage("На данный день(дни) отгул уже был добавлен. Отгул не был добавлен.", "error");
             }
         } else {
             FlashMessages::addMessage("Ошибка заполнения. Отгул не был добавлен.", "error");
