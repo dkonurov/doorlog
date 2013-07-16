@@ -58,8 +58,32 @@ abstract class Model {
     protected function execute($queryString, $params = array()){
         $db = Db::getInstance();
         $stmt = $db->prepare($queryString);
+        if (!stmt) {
+            throw new \Exception("error prepare statement '$queryString'");
+        }
         $ans = $stmt->execute($params);
+        if (!ans) {
+            throw new \Exception("error execute '$queryString', '{${var_export($params)}}'");
+        }
         return $ans;
+    }
+    
+    public function startTransaction()
+    {
+        $db = Db::getInstance();
+        $db->beginTransaction();
+    }
+    
+    public function commit()
+    {
+        $db = Db::getInstance();
+        $db->commit();
+    }
+    
+    public function rollBack()
+    {
+        $db = Db::getInstance();
+        $db->rollBack();
     }
 
 }
