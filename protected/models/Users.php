@@ -406,10 +406,10 @@ class Users extends Model{
             FROM users_statuses AS u
         LEFT JOIN status AS s ON u.status_id = s.id
         WHERE u.user_id in
-        (SELECT id FROM user WHERE id = :id AND is_shown = 1 )
+        (SELECT id FROM user WHERE id = :id)
         AND u.date
         BETWEEN :date1 AND :date2 ";
-        
+
         if($type){
             $params['type'] = $type;
             $q = $q." AND u.status_id = :type";

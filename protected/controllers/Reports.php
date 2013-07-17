@@ -275,21 +275,19 @@ class Reports extends Controller {
             $allUsers = $dep->getUsers($currentDep['id']);
 
             foreach ($allUsers as $currentUser) {
-                $monthReport = $this->getMonthReport($currentUser['id'], $date);
-
-                $timesheet[$countUsers]['user_id'] = $currentUser['id'];
-
                 $totalUserInfo = $user->getUserInfo($currentUser['id']);
-
-                $firstName = $totalUserInfo['first_name'];
-                $secondName = $totalUserInfo['second_name'];
-                $middleName = $totalUserInfo['middle_name'];
-
-                $fullName = $secondName .' '.substr($firstName, 0, 2).'. '.substr($middleName, 0,2).'.';
-                $timesheet[$countUsers]['name'] = $fullName;
-                $timesheet[$countUsers]['position'] = $currentUser['position'];
-                $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
-                $countUsers++;
+                if ($totalUserInfo['is_shown']){
+                    $monthReport = $this->getMonthReport($currentUser['id'], $date);
+                    $timesheet[$countUsers]['user_id'] = $currentUser['id'];
+                    $firstName = $totalUserInfo['first_name'];
+                    $secondName = $totalUserInfo['second_name'];
+                    $middleName = $totalUserInfo['middle_name'];
+                    $fullName = $secondName .' '.substr($firstName, 0, 2).'. '.substr($middleName, 0,2).'.';
+                    $timesheet[$countUsers]['name'] = $fullName;
+                    $timesheet[$countUsers]['position'] = $currentUser['position'];
+                    $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
+                    $countUsers++;
+                }
             }
         }
         $holidays = new Holidays();
