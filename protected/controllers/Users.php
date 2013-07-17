@@ -232,6 +232,9 @@ class Users extends Controller {
         } else {
             $users = new UsersModel;
             $search = $users->searchByName($_GET['text']);
+            foreach ($search as &$user) {
+                $user['status'] = $users->getUserStatus($user['id']);
+            }
             $this->render("Users/search.tpl", array('search' => $search, 'text' => $_GET['text']));
         }
     }
