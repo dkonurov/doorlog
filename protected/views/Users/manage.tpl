@@ -149,10 +149,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Выводить в отчётах </td>
+                        <td>Выводить в табеле </td>
                         <td>
                             {if isset($userId)}
-                                <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в отчётах</p>
+                                <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в табеле</p>
                             {else}
                                 <p><input name="is_shown" type="checkbox" value="1" checked/>Выводить в отчётах</p>
                             {/if}
