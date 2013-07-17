@@ -14,11 +14,18 @@
                 <th> Имя </th>
                 <th> Отдел </th>
                 <th> Должность </th>
+                <th> Статус </th>
                 {foreach from=$search item=user key=key}
                     <tr>
                         <td><a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['name']}</a></td>
                         <td> {$search[$key]['dep']} </td>
                         <td> {$search[$key]['pos']} </td>
+                        <td> {if {$user['status']} == 2}
+                                <span class="label label-success">В офисе</span>
+                            {else}
+                                <span class="label">Не в офисе</span>
+                            {/if}
+                        </td>
                     </tr>
                 {/foreach}
             {else}
