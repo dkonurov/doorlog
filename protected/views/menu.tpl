@@ -4,7 +4,8 @@
         <div class="container">
             <ul class="nav">
                 <li><a href="{$_root}/"><i class="icon-home"></i></a></li>
-                {if 'menu_departments'|checkPermission}
+                
+                {if 'departments_view'|checkPermission}
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
                         Отделы <span class="caret"></span>
@@ -19,30 +20,48 @@
                 </li>
                 {/if}
 
-                {if 'menu_reports'|checkPermission}
+                {if 'timeoffs_reports'|checkPermission || 'officeload_reports'|checkPermission}
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
                         Отчёты <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{$_root}/reports/officeload">По загрузке</a></li>
+                        {if 'timeoffs_reports'|checkPermission}
                         <li><a href="{$_root}/reports/timeoffs">По посещаемости</a></li>
+                        {/if}
+                        {if 'officeload_reports'|checkPermission}
+                        <li><a href="{$_root}/reports/officeload">По загрузке</a></li>
+                        {/if}
                         <li><a href="{$_root}/reports/timesheet"> Табель </a></li>
                     </ul>
                 </li>
                 {/if}
 
-                {if 'menu_settings'|checkPermission}
+                {if 'departments_view'|checkPermission 
+                    || 'roles_view'|checkPermission
+                    || 'users_view'|checkPermission
+                    || 'positions_view'|checkPermission
+                    || 'weekend_edit'|checkPermission}
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
                         Настройки <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        {if 'departments_view'|checkPermission}
                         <li><a href="{$_root}/departments">Отделы</a></li>
+                        {/if}
+                        {if 'roles_view'|checkPermission}
                         <li><a href="{$_root}/roles">Права доступа</a></li>
+                        {/if}
+                        {if 'users_view'|checkPermission}
                         <li><a href="{$_root}/users">Пользователи</a></li>
+                        {/if}
+                        {if 'positions_view'|checkPermission}
                         <li><a href="{$_root}/positions">Должности</a></li>
+                        {/if}
+                        {if 'weekend_edit'|checkPermission}
                         <li><a href="{$_root}/holidays">Выходные дни</a></li>
+                        {/if}
                     </ul>
                 </li>
                 {/if}
@@ -53,13 +72,11 @@
                 <li><a href="{$_root}/users/logout">Выйти</a></li>
             </ul>
 
-            {if 'menu_search'|checkPermission}
                 <form class="navbar-form pull-left" action="{$_root}/users/search">
                     <input type="text" class="span2" id="autocomplete" name="text" value={if isset($text)}{$text}{/if}>
                     <input type="hidden" id="id" name="id">
                     <button type="submit" class="btn">Поиск</button>
                 </form>
-            {/if}
         </div>
     </div>
 </div>
