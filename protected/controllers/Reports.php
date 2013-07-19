@@ -261,14 +261,40 @@ class Reports extends Controller {
 
     public function timesheetAction(){
         $timesheet = array();
-        $user = new UsersModel();
-        $dep = new DepartmentModel();
         $date = date('Y-m');
         if (isset($_GET['date']) && $_GET['date']){
             $date = '01.'.$_GET['date'];
             $date = date('Y-m', strtotime($date));
         }
         $dayCount = date("t", strtotime($date));
+        $timesheet = $this->getTimesheet($date);
+        $holidays = new Holidays();
+        $allHolidays = $holidays->getAllDays($date);
+        $days = array();
+        foreach ($allHolidays as $oneDay) {
+            $days[] = $oneDay['type'];
+        }
+        $date = date('m.Y', strtotime($date));
+        $this->render("Reports/timesheet.tpl" , array('timesheet' => $timesheet,'days'=> $days,'date'=> $date, 'dayCount' => $dayCount));
+    }
+
+    public function timesheetsaveAction(){
+        if (isset($_GET['date'])){
+            $date = date('Y-m', strtotime('01.'.$_GET['date']));
+        } else {
+            $date = date('Y-m');
+        }
+        $report = $this->getTimesheet($date);
+
+        $util = new Utils();
+        $util->timesheetsave($report);
+        $date = date('m.Y', strtotime($date.'-01'));
+        Utils::redirect("/reports/timesheet?date=$date");
+    }
+    private function getTimesheet($date){
+        $user = new UsersModel();
+        $dep = new DepartmentModel();
+        
         $allDep = $dep->getMenuDepartments();
         $countUsers = 0;
         foreach ($allDep as $currentDep) {
@@ -282,7 +308,7 @@ class Reports extends Controller {
                     $firstName = $totalUserInfo['first_name'];
                     $secondName = $totalUserInfo['second_name'];
                     $middleName = $totalUserInfo['middle_name'];
-                    $fullName = $secondName .' '.substr($firstName, 0, 2).'. '.substr($middleName, 0,2).'.';
+                    $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
                     $timesheet[$countUsers]['name'] = $fullName;
                     $timesheet[$countUsers]['position'] = $currentUser['position'];
                     $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
@@ -290,14 +316,7 @@ class Reports extends Controller {
                 }
             }
         }
-        $holidays = new Holidays();
-        $allHolidays = $holidays->getAllDays($date);
-        $days = array();
-        foreach ($allHolidays as $oneDay) {
-            $days[] = $oneDay['type'];
-        }
-        $date = date('m.Y', strtotime($date));
-        $this->render("Reports/timesheet.tpl" , array('timesheet' => $timesheet,'days'=> $days,'date'=> $date, 'dayCount' => $dayCount));
+        return $timesheet;
     }
 
     private function getOfficalTimeForTimesheet($id, $date){
