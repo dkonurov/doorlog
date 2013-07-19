@@ -186,9 +186,6 @@ class Utils{
         $objReader = \PHPExcel_IOFactory::createReader('Excel5');
         $objPHPExcel = $objReader->load('template.xls');
 
-        $objReaderEnd = \PHPExcel_IOFactory::createReader('Excel5');
-        $objPHPExcelEnd = $objReaderEnd->load('endtemplate.xls');
-
         $date = array_keys($report[0]['report']);
         $dateStart = date('d.m.Y', strtotime($date[0].'-01'));
         $dateEnd = "POKAX3DATE";
