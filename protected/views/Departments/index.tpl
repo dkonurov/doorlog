@@ -24,16 +24,26 @@
 
             {foreach from=$departments item=department}
                 <tr>
-                    <td><a href="{$_root}/departments/edit?id={$department['id']}">{$department['name']}</a></td>
+                    <td>
+                    {if 'departments_edit'|checkPermission}
+                    <a href="{$_root}/departments/edit?id={$department['id']}">{$department['name']}</a>
+                    {else}
+                    {$department['name']}
+                    {/if}
+                    </td>
                     <td> {$department['total_users']} </td>
                     <td> {$department['chief_name']} </td>
                 </tr>
             {/foreach}
         </table>
     </div>
+    
+    {if 'departments_add'|checkPermission}
     <div class="span4 additional">
         {include file='protected/views/Departments/add.tpl'}
     </div>
+    {/if}
+    
 {/block}
 
 {/extends}

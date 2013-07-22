@@ -25,16 +25,24 @@
             <tbody>
                 {foreach from=$positions item=position}
                     <tr>
-                        <td> <a href="{$_root}/positions/edit?id={$position['id']}"> {$position['name']} </a></td>
+                        <td> 
+                        {if 'positions_edit'|checkPermission}
+                        <a href="{$_root}/positions/edit?id={$position['id']}"> {$position['name']} </a>
+                        {else}
+                        {$position['name']}
+                        {/if}
+                        </td>
                         <td> {$position['total_position']}</td>
                     </tr>
                 {/foreach}
             </tbody>
         </table>
     </div>
+    {if 'positions_add'|checkPermission}
     <div class="span4 additional">
         {include file='protected/views/Positions/add.tpl'}
     </div>
+    {/if}
 {/block}
 
 {/extends}

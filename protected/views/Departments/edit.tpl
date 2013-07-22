@@ -30,11 +30,11 @@
         <form action = "{$_root}/departments/delete" method='post' id="delete">
             <input type="hidden" name="id" value="{$departments['id']}">
         </form>
-
         <button type="submit" class="btn btn-success" form="edit-department"> Сохранить </button>
         <a class="btn" href="{$_root}/departments"> Отмена </a>
-
+        {if 'departments_delete'|checkPermission}
         <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
+        {/if}
     </div>
 {/block}
 
