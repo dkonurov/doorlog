@@ -17,7 +17,7 @@ class Departments extends Controller {
      */
     public function indexAction() {
         if(!Acl::checkPermission('departments_view')){
-            $this->render("errorAccess.tpl");
+                $this->render("errorAccess.tpl");
         }
         $departmentsModel =  new DepartmentModel();
         $departments =  $departmentsModel->getAll();
@@ -51,7 +51,7 @@ class Departments extends Controller {
      */
     public function editAction() {
         if(!Acl::checkPermission('departments_edit')){
-            $this->render("errorAccess.tpl");
+                $this->render("errorAccess.tpl");
         }
         $id = $_GET['id'];
         $departmentsModel =  new DepartmentModel();
@@ -101,9 +101,6 @@ class Departments extends Controller {
      * @return void
      */
     public function showAction(){
-        if(!Acl::checkPermission('departments_view')){
-            $this->render("errorAccess.tpl");
-        }
         $time  = new Time();
         $department =  new DepartmentModel();
         $userModel = new UserModel();

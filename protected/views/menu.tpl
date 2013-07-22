@@ -5,7 +5,6 @@
             <ul class="nav">
                 <li><a href="{$_root}/"><i class="icon-home"></i></a></li>
                 
-                {if 'departments_view'|checkPermission}
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
                         Отделы <span class="caret"></span>
@@ -18,7 +17,6 @@
                         {/if}
                     </ul>
                 </li>
-                {/if}
 
                 {if 'timeoffs_reports'|checkPermission || 'officeload_reports'|checkPermission}
                 <li class="dropdown">
@@ -37,11 +35,11 @@
                 </li>
                 {/if}
 
-                {if 'departments_view'|checkPermission 
+                {if 'departments_view'|checkPermission
                     || 'roles_view'|checkPermission
                     || 'users_view'|checkPermission
-                    || 'positions_view'|checkPermission
-                    || 'weekend_edit'|checkPermission}
+                    || 'positions_view'|checkPermission 
+                    || 'holiday_view'|checkPermission}
                 <li class="dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown">
                         Настройки <span class="caret"></span>
@@ -59,7 +57,7 @@
                         {if 'positions_view'|checkPermission}
                         <li><a href="{$_root}/positions">Должности</a></li>
                         {/if}
-                        {if 'weekend_edit'|checkPermission}
+                        {if 'holiday_edit'|checkPermission}
                         <li><a href="{$_root}/holidays">Выходные дни</a></li>
                         {/if}
                     </ul>

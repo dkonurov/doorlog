@@ -162,6 +162,7 @@
             </div>
         </form>
         <div class="clear">
+            {if 'users_edit'|checkPermission || 'users_add'|checkPermission}
             <button type=submit class="btn btn-success" form="user">
                 {if isset($userId)}
                     Сохранить
@@ -170,8 +171,11 @@
                 {/if}
             </button>
             <a class="btn" href="{$_root}/users"> Отмена </a>
+            {else}
+            <a class="btn" href="{$_root}/users"> Назад </a>
+            {/if}
 
-            {if isset($userId)}
+            {if isset($userId) && 'users_delete'|checkPermission}
                 <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
                 <form action = "{$_root}/users/delete" method='post' id="delete">
                     <input type="hidden" name="id" value="{$userId}">

@@ -27,9 +27,15 @@
                 <tbody>
                     {$num=10*$currentPage-9}
                     {foreach from=$users item=user}
-                        <tr onclick="window.location='{$_root}/users/manage?id={$user['id']}'" style="cursor: pointer">
-                            <td>{$num}</td>
-                            <td> {$user['name']} </td>
+                        <tr>
+                            <td> {$num} </td>
+                            <td>
+                            {if 'users_edit'|checkPermission}
+                            <a href="{$_root}/users/manage?id={$user['id']}"> {$user['name']} </a>
+                            {else}
+                            {$user['name']}
+                            {/if}
+                            </td>
                             <td> {$user['email']} </td>
                             <td> {$user['department']} </td>
                             <td> {$user['position']} </td>

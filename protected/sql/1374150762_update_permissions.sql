@@ -10,7 +10,7 @@ DELETE FROM `permission_group` WHERE `id` = 8;
 INSERT INTO `permission` 
 (`key`, `name`, `permission_group_id`)
 VALUES 
-('weekend_edit', 'Выходные дни', 2);
+('holiday_edit', 'Редактирование выходных дней', 2);
 
 COMMIT;
 
