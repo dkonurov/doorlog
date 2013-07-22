@@ -1,6 +1,7 @@
 <?php
 namespace controllers;
 
+use core\Acl;
 use core\Controller;
 use core\FlashMessages;
 use models\Holidays as HolidayModel;
@@ -12,6 +13,9 @@ class Holidays extends Controller{
      * @return void
      */
     public function indexAction(){
+        if(!Acl::checkPermission('holiday_view')){
+            $this->render("errorAccess.tpl");
+        }
         $holidaysModel = new HolidayModel();
         $time = new Time();
 

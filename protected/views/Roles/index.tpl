@@ -23,16 +23,24 @@
             <tbody>
                 {foreach from=$roles item=role}
                     <tr>
-                       <td><a href="{$_root}/roles/edit?id={$role['id']}"> {$role['name']} </a></td>
+                       <td>
+                       {if 'roles_edit'|checkPermission}
+                       <a href="{$_root}/roles/edit?id={$role['id']}"> {$role['name']} </a>
+                       {else}
+                       {$role['name']}
+                       {/if}
+                       </td>
                        <td> {$role['users_count']} </td>
                     </tr>
                 {/foreach}
             </tbody>
         </table>
     </div>
+    {if 'roles_add'|checkPermission}
     <div class="span4 additional">
         {include file='protected/views/Roles/add.tpl'}
     </div>
+    {/if}
     {/block}
 
 {/extends}

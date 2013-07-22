@@ -22,7 +22,9 @@
         
         <button type="submit" id="save" class="btn btn-success" form="edit-position"> Сохранить </button>
         <a href="{$_root}/positions" id="edit-cancel" class="btn">Отмена</a>
+        {if 'positions_delete'|checkPermission}
         <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
+        {/if}
     </div>
     
 {/block}

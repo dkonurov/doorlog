@@ -33,7 +33,9 @@
             </form>
             <button type="submit" class="btn btn-success" form="change-permissions"> Сохранить </button>
             <a class="btn" href="{$_root}/roles">Отмена</a>
+            {if 'roles_delete'|checkPermission}
             <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal" form="delete">Удалить</a>
+            {/if}
        </div>
    {/block}
    {block name="footer"}{/block}

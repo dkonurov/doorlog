@@ -5,3 +5,6 @@ protected/config/config.php
 protected/composer.lock
 protected/composer.phar
 .gitignore
+/.settings
+/.buildpath
+/.project
