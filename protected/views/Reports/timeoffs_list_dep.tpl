@@ -3,38 +3,17 @@
     <script src="{$_root}/assets/js/reportsDatepicker.js"></script>
     <script src="{$_root}/assets/js/reportsAutocomplete.js"></script>
 {/block}
-{block name="title"} Отчет по посещаемости {/block}
+{block name="title"} Отчет по посещаемости отдела{/block}
     {block name="breadcrumbs"}
         <ul class="breadcrumb">
           <li><a href="{$_root}/"> Главная </a> <span class="divider">/</span></li>
-          <li class="active"> Отчет по посещаемости </li>
+          <li class="active"> Отчет по посещаемости отдела</li>
         </ul>
     {/block}
-    {block name="pagetitle"}<h1> Отчет по посещаемости </h1>{/block}
+    {block name="pagetitle"}<h1> Отчет по посещаемости отдела</h1>{/block}
     {block name="content"}
 
-        <form id = "reports" type='GET' action = "{$_root}/reports/timeoffs">
-
-        <select id = 'type' name='stype'>
-            <option value='1' selected> Пользователь </option>
-            {if {$smarty.get.stype} == 2}
-                <option value='2' selected> Отделы </option>
-            {else}
-                <option value='2'> Отделы </option>
-            {/if}
-        </select>
-        <div id="user">
-            {$userSelected=0}
-            <select id='user_id' name = 'user_id'>
-            {foreach from=$allUsers item=user}
-            {if {$user['id']} == {$smarty.get.user_id}}
-                <option value = "{$user['id']}" {$userSelected=$user['id']} selected> {$user['name']} </option>
-            {else}
-                <option value = "{$user['id']}"> {$user['name']} </option>
-            {/if}
-            {/foreach}
-            </select>
-        </div>
+        <form id = "reports" type='GET' action = "{$_root}/reports/timeoffsdep">
 
         <div id="dep">
             <select id='dep_id' name='dep_id'>
@@ -57,10 +36,7 @@
     <br>
     <br>
     <div class="span7">
-    {if $reportAllDaysArray}
-        <h3>{$name['user']}</h3>
-        {include file='protected/views/Reports/timeoffs.tpl' reportAllDaysArray = $reportAllDaysArray}
-    {else}
+    
     {if $totalDepInfo}
         <br>
         <br>
@@ -74,14 +50,13 @@
             <tr>
             {foreach from=$totalDepInfo['totalUserStats'] item=user}
             <tr>
-                <td><a href="{$_root}/reports/timeoffs?stype=1&user_id={$user['id']}&dep_id=0&date={$totalDepInfo['date']}">{$user['name']}</a></td>
+                <td><a href="{$_root}/reports/timeoffsuser?user_id={$user['id']}&date={$totalDepInfo['date']}">{$user['name']}</a></td>
                 {foreach from=$user['stats'] item=userStats}
                 <td>{$userStats}</td>
                 {/foreach}
             </tr>
             {/foreach}
         </table>
-    {/if}
     {/if}
     </div>
     {/block}
