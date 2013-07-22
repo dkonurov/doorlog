@@ -187,14 +187,9 @@ class Utils{
         $objPHPExcel = $objReader->load('template.xls');
 
         $date = array_keys($report[0]['report']);
-        $dateStart = date('d.m.Y', strtotime($date[0].'-01'));
-        $dateEnd = "POKAX3DATE";
-
-        //Установка дат
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("P15", $dateEnd);
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T15", $dateStart);
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("V15", $dateEnd);
-
+        $dateStart = "";
+        $dateEnd = "";
+        $isFirstWorkDay = true;
 
         $mergeABCcol = 3;
         $startRow = 26;
@@ -296,6 +291,16 @@ class Utils{
                         ->setRGB('FF0000');
                     }
 
+                    if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
+                        $workDayCount2++;
+                    }
+                    if ( $valDate['status_name'] != 'В' ) {
+                        $dateEnd = $keyDate;
+                        if ($isFirstWorkDay){
+                            $dateStart = $keyDate;
+                            $isFirstWorkDay = false;
+                        }
+                    }
 
                     $startCol++;
 
@@ -307,8 +312,13 @@ class Utils{
                     // кол-во рабочих дней месяца
                     if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
                         $workDayCount2++;
-                    } elseif ( $valDate['status_name'] != 'В' ) {
+                    }
+                    if ( $valDate['status_name'] != 'В' ) {
                         $dateEnd = $keyDate;
+                        if ($isFirstWorkDay){
+                            $dateStart = $keyDate;
+                            $isFirstWorkDay = false;
+                        }
                     }
 
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$startCol2".($startRow + 2), $valDate['status_name']);
@@ -333,6 +343,7 @@ class Utils{
 
             $startRow += 4;
             $dateEnd = date('d.m.Y', strtotime($dateEnd));
+            $dateStart = date('d.m.Y', strtotime($dateStart));
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue("V15", $dateEnd);
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue("P15", $dateEnd);
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T15", $dateStart);

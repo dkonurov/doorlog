@@ -285,7 +285,6 @@ class Reports extends Controller {
             $date = date('Y-m');
         }
         $report = $this->getTimesheet($date);
-
         $util = new Utils();
         $util->timesheetsave($report);
         $date = date('m.Y', strtotime($date.'-01'));
@@ -372,10 +371,14 @@ class Reports extends Controller {
         //Проставляем отгулы и командировки (отсутствие по ув причине), тип отгула
         for ($i=0, $arrSize = count($monthTimeOffs); $i < $arrSize; $i++) {
             $correctDate = $monthTimeOffs[$i]['date'];
-            if (!$isHalfWork){
-                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
-            } else {
-                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
+            $report[$correctDate]['time'] = "";
+            if ($statusesTime[$monthTimeOffs[$i]['status_id']] != 0){
+                if (!$isHalfWork){
+                    $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
+                } else {
+                    $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
+                }
+                
             }
             switch ($monthTimeOffs[$i]['status_id']) {
                 case StatusesType::SICK:

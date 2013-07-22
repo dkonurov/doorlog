@@ -30,10 +30,10 @@
         <td colspan='16'> Отметки о явках и неявках на работу по числам месяца </td>
     </tr>
     <tr>    {for $day = 1 to 15}
-                {if $days[$day-1] == 0}
-                    <td>
-                {else}
+                {if $days[$day-1] == 1}
                     <td bgcolor='red'>
+                {else}
+                    <td>
                 {/if}
                 {if $day < 10}
                     0{$day} </td>
