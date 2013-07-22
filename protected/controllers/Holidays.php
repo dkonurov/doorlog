@@ -13,7 +13,7 @@ class Holidays extends Controller{
      * @return void
      */
     public function indexAction(){
-        if(!Acl::checkPermission('holiday_view')){
+        if(!Acl::checkPermission('holiday_edit')){
             $this->render("errorAccess.tpl");
         }
         $holidaysModel = new HolidayModel();
