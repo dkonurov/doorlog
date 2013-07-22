@@ -19,7 +19,7 @@ class Users extends Controller {
      * @return void
      */
     public function indexAction() {
-        if(!Acl::checkPermission('users_edit')){
+        if(!Acl::checkPermission('users_view')){
             $this->render("errorAccess.tpl");
         }
         $users = new UsersModel();
