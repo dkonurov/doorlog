@@ -11,6 +11,7 @@ use models\Holidays;
 use core\Utils;
 use models\Status;
 use models\StatusesType;
+use models\Positions;
 
 class Reports extends Controller {
 
@@ -299,6 +300,7 @@ class Reports extends Controller {
     private function getTimesheet($date){
         $user = new UsersModel();
         $dep = new DepartmentModel();
+        $pos = new Positions();
         $timesheet = array();
 
         $allPositions = $user->getPositionsList();
@@ -340,7 +342,13 @@ class Reports extends Controller {
 
                 $timesheet[$i]['name'] = $fullName;
                 $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
-                $timesheet[$i]['position'] = $posNames[$allUsers[$i]['position_id']];//тута чтота делаем
+
+                if ($pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date) != 0){
+                    $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
+                } else {
+                    $actualPos = $allUsers[$i]['position_id'];
+                }
+                $timesheet[$i]['position'] = $posNames[$actualPos];
             }
         }
         return $timesheet;

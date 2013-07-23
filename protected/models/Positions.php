@@ -87,5 +87,45 @@ class Positions extends Model{
 
         return $result;
     }
+
+    /**
+     * Set position and date on registration or change userinfo 
+     * @param integer $userId
+     * @param integer $userPos
+     * @param string $date
+     * @return bool
+    */
+    public function savePositionToHistory($userId, $userPos, $date = 0){
+        $q = "INSERT INTO `positions_history` VALUES (NULL, :user_id, :position_id, :date ) ";
+        $params = array();
+        $params['user_id'] = $userId;
+        $params['position_id'] = $userPos;
+        if ( $date ){
+            $params['date'] = $date;
+        } else {
+            $params['date'] = date('Y-m-d');
+        }
+        $result = $this->execute($q, $params);
+        return $result;
+    }
+
+    /**
+     * Get latest actual position for current month
+     * @param integer $userId
+     * @param string $date
+     * @return int
+    */
+    public function getLatestActualPositionForCurrMonth($userId, $date){
+        $params = array();
+        $date1 = $date.'-01';
+        $date2 = $date.'-31';
+        $q = "SELECT * FROM `positions_history` WHERE `user_id` = :user_id AND `date` BETWEEN :date1 AND :date2
+            ORDER BY `date` DESC, `id` DESC";
+        $params['date1'] = $date1;
+        $params['date2'] = $date2;
+        $params['user_id'] = $userId;  
+        $result = $this->fetchOne($q,$params);
+        return $result['position_id'];
+    }
 }
 ?>

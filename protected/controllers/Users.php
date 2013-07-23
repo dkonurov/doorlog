@@ -4,6 +4,7 @@ namespace controllers;
 
 use core\Controller;
 use models\Users as UsersModel;
+use models\Positions;
 use models\StatusesType;
 use core\Utils;
 use core\FlashMessages;
@@ -385,11 +386,14 @@ class Users extends Controller {
     public function add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
+        $pos = new Positions();
+
         $salt = Utils::createRandomString(5, 5);
         $password = Utils::createRandomString(8, 10);
         $hash = $this->generateHash($password, $salt);
         if (($users->insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime))
-            && ($roles->insertUserRole($users->getId($user), $role) )) {
+            && ($roles->insertUserRole($users->getId($user), $role)) 
+            && ($pos->savePositionToHistory($user, $position))) {
             FlashMessages::addMessage("Пользователь успешно добавлен.", "info");
         } else {
             FlashMessages::addMessage("Произошла ошибка. Пользователь не был добавлен.", "error");
@@ -416,6 +420,11 @@ class Users extends Controller {
     public function update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
         $users = new UsersModel;
         $roles = new RolesModel();
+        $pos = new Positions();
+        $user = $users->getUserInfo($id);
+        if (($user['position_id'] != $position)){
+            $pos->savePositionToHistory($id, $position);
+        }
         if(($users->editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime))
             && ($roles->editUserRole($id, $role))){
             FlashMessages::addMessage("Пользователь успешно отредактирован.", "success");
