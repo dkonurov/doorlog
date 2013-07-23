@@ -307,21 +307,41 @@ class Reports extends Controller {
         for ($p = 0, $arrSize = count($allPositions); $p < $arrSize; $p++){
             $posNames[$allPositions[$p]['id']] = $allPositions[$p]['name'];
         }
-        var_dump($posNames);
 
         $allUsers = $user->getAllUsersForTimesheet();
-
         for ($i = 0, $arrSize = count($allUsers); $i < $arrSize; $i++){
-            $timesheet[$i]['user_id'] = $allUsers[$i]['id'];
 
-            $firstName = $allUsers[$i]['first_name'];
-            $secondName = $allUsers[$i]['second_name'];
-            $middleName = $allUsers[$i]['middle_name'];
-            $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
+            $isShowInThisMonth = false;
 
-            $timesheet[$i]['name'] = $fullName;
-            $timesheet[$i]['position'] = $posNames[$allUsers[$i]['position_id']];//тута чтота делаем
-            $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
+            if ( $allUsers[$i]['startwork'] == '0000-00-00'){
+                $isShowInThisMonth = false;
+            } elseif( $allUsers[$i]['endwork'] == '0000-00-00' 
+                && strtotime(substr($allUsers[$i]['startwork'], 0, 7).'-01') <= strtotime($date.'-01') ){
+                $isShowInThisMonth = true;
+            } elseif( strtotime(substr($allUsers[$i]['startwork'], 0, 7).'-01') <= strtotime($date.'-01') && 
+                strtotime($date.'-01') <= strtotime(substr($allUsers[$i]['endwork'], 0, 7).'-01') ) {
+                $isShowInThisMonth = true;
+            } else {
+                $isShowInThisMonth = false;
+            }
+
+            if ( $allUsers[$i]['endwork'] == '0000-00-00' && $allUsers[$i]['startwork'] == '0000-00-00' ){
+                $isShowInThisMonth = false;
+            }
+
+            if ( $isShowInThisMonth ){
+
+                $timesheet[$i]['user_id'] = $allUsers[$i]['id'];
+
+                $firstName = $allUsers[$i]['first_name'];
+                $secondName = $allUsers[$i]['second_name'];
+                $middleName = $allUsers[$i]['middle_name'];
+                $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
+
+                $timesheet[$i]['name'] = $fullName;
+                $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
+                $timesheet[$i]['position'] = $posNames[$allUsers[$i]['position_id']];//тута чтота делаем
+            }
         }
         return $timesheet;
     }

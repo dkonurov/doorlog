@@ -556,7 +556,8 @@ class Users extends Model{
      * @return array
     */
     public function getAllUsersForTimesheet(){
-        $q = "SELECT * FROM `user` WHERE `is_shown` = 1";
+        $q = "SELECT `id`, `first_name`, `second_name`, `middle_name`, `position_id`,  `startwork`, `endwork`
+            FROM `user` WHERE `is_shown` = 1";
         $result = $this->fetchAll($q);
         return $result;
     }
