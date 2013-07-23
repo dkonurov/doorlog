@@ -260,6 +260,9 @@ class Reports extends Controller {
     }
 
     public function timesheetAction(){
+        if(!Acl::checkPermission('watch_timesheet')){
+            $this->render("errorAccess.tpl");
+        }
         $timesheet = array();
         $date = date('Y-m');
         if (isset($_GET['date']) && $_GET['date']){
@@ -279,6 +282,9 @@ class Reports extends Controller {
     }
 
     public function timesheetsaveAction(){
+        if(!Acl::checkPermission('watch_timesheet')){
+            $this->render("errorAccess.tpl");
+        }
         if (isset($_GET['date'])){
             $date = date('Y-m', strtotime('01.'.$_GET['date']));
         } else {
