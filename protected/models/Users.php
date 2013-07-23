@@ -550,4 +550,14 @@ class Users extends Model{
         $result = $this->fetchOne($q, $params);
         return $result;
     }
+
+    /**
+     * Get all users for timesheet
+     * @return array
+    */
+    public function getAllUsersForTimesheet(){
+        $q = "SELECT * FROM `user` WHERE `is_shown` = 1";
+        $result = $this->fetchAll($q);
+        return $result;
+    }
 }
