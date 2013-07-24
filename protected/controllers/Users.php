@@ -267,6 +267,7 @@ class Users extends Controller {
             $secondName = $_POST['secondName'];
             $middleName = $_POST['middleName'];
             $department = $_POST['department'];
+            $timesheetid = $_POST['timesheetid'];
             $role = $_POST['role'];
             $email = $_POST['email'];
             $phone = $_POST['phone'];
@@ -303,19 +304,22 @@ class Users extends Controller {
             } else {
                 $halftime = 0;
             }
-
-            $inputErrors = $users->checkUserAttr($email, $phone, $position, $department);
+            if($isShown){
+                $inputErrors = $users->checkUserAttr($email, $position, $department, $timesheetid);
+            } else {
+                $inputErrors = $users->checkUserAttr($email, $position, $department);
+            }
             if ($inputErrors){
                 $errorString = 'Ошибка заполнения поля: ' . implode(', ', $inputErrors).'.';
                 FlashMessages::addMessage($errorString, "error");
             } else {
                 if(isset($_GET['id']) && $_GET['id']){
                     $id = $_GET['id'];
-                    $this->update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
+                    $this->update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid);
                 } else {
                     if(isset($_POST['userId'])){
                         $user = $_POST['userId'];
-                        $this->add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime);
+                        $this->add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid);
                     }
                 }
             }
@@ -383,17 +387,20 @@ class Users extends Controller {
      * @param boolean $isShown
      * @return void
      */
-    public function add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
-        $users = new UsersModel;
+    public function add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid){
+
+        $users = new UsersModel();
         $roles = new RolesModel();
         $pos = new Positions();
 
         $salt = Utils::createRandomString(5, 5);
         $password = Utils::createRandomString(8, 10);
         $hash = $this->generateHash($password, $salt);
-        if (($users->insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime))
-            && ($roles->insertUserRole($users->getId($user), $role)) 
-            && ($pos->savePositionToHistory($user, $position))) {
+
+        if (($users->insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime, $timesheetid))
+            && ($roles->insertUserRole($users->getId($user), $role))
+            && ($pos->savePositionToHistory($users->getId($user), $position))) {
+
             FlashMessages::addMessage("Пользователь успешно добавлен.", "info");
         } else {
             FlashMessages::addMessage("Произошла ошибка. Пользователь не был добавлен.", "error");
@@ -417,7 +424,7 @@ class Users extends Controller {
      * @param integer $isShown
      * @return void
      */
-    public function update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime){
+    public function update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid){
         $users = new UsersModel;
         $roles = new RolesModel();
         $pos = new Positions();
@@ -425,7 +432,7 @@ class Users extends Controller {
         if (($user['position_id'] != $position)){
             $pos->savePositionToHistory($id, $position);
         }
-        if(($users->editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime))
+        if(($users->editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime, $timesheetid))
             && ($roles->editUserRole($id, $role))){
             FlashMessages::addMessage("Пользователь успешно отредактирован.", "success");
         } else {

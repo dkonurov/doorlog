@@ -15,10 +15,19 @@ $(document).ready(function () {
                      || $('#middleName').val().length == 0 
                      || $('#department').val() == 0
                      || $('#position').val() == 0
-                     || $('#email').val().length == 0
-                     || $('#phone').val().length == 0) {
+                     || $('#email').val().length == 0) {
                      e.preventDefault();
             alert("Поля отмеченные * обезательные");
              }
              });
+
+         a = 0;
+         $('#is_shown').click(function(){
+            if(a % 2 == 0){
+              $('#tid').addClass('hidden')
+            } else {
+              $('#tid').removeClass('hidden')
+            }
+              a++
+         });
 });

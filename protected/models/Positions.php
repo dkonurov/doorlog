@@ -95,16 +95,12 @@ class Positions extends Model{
      * @param string $date
      * @return bool
     */
-    public function savePositionToHistory($userId, $userPos, $date = 0){
-        $q = "INSERT INTO `positions_history` VALUES (NULL, :user_id, :position_id, :date ) ";
+    public function savePositionToHistory($userId, $userPos){
+        $q = "INSERT INTO positions_history VALUES (NULL, :user_id, :position_id, :data)";
         $params = array();
         $params['user_id'] = $userId;
         $params['position_id'] = $userPos;
-        if ( $date ){
-            $params['date'] = $date;
-        } else {
-            $params['date'] = date('Y-m-d');
-        }
+        $params['data'] = date('Y-m-d');
         $result = $this->execute($q, $params);
         return $result;
     }
