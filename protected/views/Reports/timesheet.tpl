@@ -12,10 +12,14 @@
 {block name="content"}
 Отчет за месяц:
 <form id='timesheet' type='GET' action='{$_root}/reports/timesheet'>
-    <input name = "date" type="text" id="datepicker" class='withoutDays' value = "{$date}" />
-    <br>
-    <input form = "timesheet" type="submit" id="add" value = "Сформировать" class="btn btn-success" >
+    <input form = "timesheet" name = "date" type="text" id="datepicker" class='withoutDays' value = "{$date}" />
 </form>
+    <input form = "timesheet" type="submit" id="add" value = "Сформировать" class="btn btn-success" >
+
+<form id='timesheetsave' type='GET' action='{$_root}/reports/timesheetsave'>
+    <input form = "timesheetsave" name = "date" type="text" id="datepickerforsave" class='hidden' value = "{$date}" />
+</form>
+    <input form = "timesheetsave" type="submit" value = "Сохранить" class="btn btn-primary" >
 <br>
 <h3>Отчет за {$date}</h3>
 <table class='table table-bordered'>
@@ -26,10 +30,10 @@
         <td colspan='16'> Отметки о явках и неявках на работу по числам месяца </td>
     </tr>
     <tr>    {for $day = 1 to 15}
-                {if $days[$day-1] == 0}
-                    <td>
-                {else}
+                {if $days[$day-1] == 1}
                     <td bgcolor='red'>
+                {else}
+                    <td>
                 {/if}
                 {if $day < 10}
                     0{$day} </td>

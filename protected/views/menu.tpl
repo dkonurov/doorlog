@@ -31,7 +31,9 @@
                         {if 'officeload_reports'|checkPermission}
                         <li><a href="{$_root}/reports/officeload">По загрузке</a></li>
                         {/if}
-                        <li><a href="{$_root}/reports/timesheet"> Табель </a></li>
+                        {if 'watch_timesheet'|checkPermission}
+                            <li><a href="{$_root}/reports/timesheet"> Табель </a></li>
+                        {/if}
                     </ul>
                 </li>
                 {/if}
