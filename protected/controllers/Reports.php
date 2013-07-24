@@ -342,12 +342,8 @@ class Reports extends Controller {
 
                 $timesheet[$i]['name'] = $fullName;
                 $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
+                $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
 
-                if ($pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date) != 0){
-                    $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
-                } else {
-                    $actualPos = $allUsers[$i]['position_id'];
-                }
                 $timesheet[$i]['position'] = $posNames[$actualPos];
             }
         }

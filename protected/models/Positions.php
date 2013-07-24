@@ -117,15 +117,19 @@ class Positions extends Model{
     */
     public function getLatestActualPositionForCurrMonth($userId, $date){
         $params = array();
-        $date1 = $date.'-01';
-        $date2 = $date.'-31';
-        $q = "SELECT * FROM `positions_history` WHERE `user_id` = :user_id AND `date` BETWEEN :date1 AND :date2
-            ORDER BY `date` DESC, `id` DESC";
-        $params['date1'] = $date1;
-        $params['date2'] = $date2;
-        $params['user_id'] = $userId;  
-        $result = $this->fetchOne($q,$params);
-        return $result['position_id'];
+        $actualPos = 0;
+        $q = "SELECT `position_id`, `date` FROM `positions_history` WHERE `user_id` = :user_id";
+        $params['user_id'] = $userId;
+        $result = $this->fetchAll($q,$params);
+        for ($i = 0, $arrSize = count($result); $i  < $arrSize-1; $i++){
+            if (substr($result[$i]['date'], 0, 7) <= $date && $date < substr($result[$i+1]['date'], 0, 7)){
+                $actualPos = $result[$i]['position_id'];
+            }
+        }
+        if (!$actualPos){
+            $actualPos = $result[$arrSize-1]['position_id'];
+        }
+        return $actualPos;
     }
 }
 ?>
