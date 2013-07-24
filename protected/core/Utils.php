@@ -398,6 +398,8 @@ class Utils{
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T".($startRow + 2), substr($dateStart,6 ,10).'г.');
         $objPHPExcel->getActiveSheet()->getStyle("T".($startRow + 2))->getFont()->setSize(8);
 
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("N15", substr($dateStart,4 ,2));
+
         $objPHPExcel->getActiveSheet()->getStyle('O'.($startRow + 2))->getBorders()->getBottom()
         ->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
         $objPHPExcel->getActiveSheet()->getStyle("Q".($startRow + 2).':R'.($startRow + 2))->getBorders()->getBottom()
