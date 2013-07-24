@@ -40,14 +40,14 @@
     {if $totalDepInfo}
         <br>
         <br>
-        <table class="table table-bordered reports">
-            <tr>
-                <td> Имя </td>
-                <td> Часы </td>
+        <table class="table table-bordered table-striped table-hover reports">
+            <thead>
+                <th> Имя </th>
+                <th> Часы </th>
                 {foreach from=$totalDepInfo['statuses'] item=totalUserInfo}
-                    <td>{$totalUserInfo['name']}</td>
+                    <th>{$totalUserInfo['name']}</th>
                 {/foreach}
-            <tr>
+            </thead>
             {foreach from=$totalDepInfo['totalUserStats'] item=user}
             <tr>
                 <td><a href="{$_root}/reports/timeoffsuser?user_id={$user['id']}&date={$totalDepInfo['date']}">{$user['name']}</a></td>
