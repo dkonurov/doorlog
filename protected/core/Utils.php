@@ -294,7 +294,7 @@ class Utils{
                     if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
                         $workDayCount2++;
                     }
-                    if ( $valDate['status_name'] != 'В' ) {
+                    if ( $valDate['dayType'] != 1 ) {
                         $dateEnd = $keyDate;
                         if ($isFirstWorkDay){
                             $dateStart = $keyDate;
@@ -313,7 +313,7 @@ class Utils{
                     if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
                         $workDayCount2++;
                     }
-                    if ( $valDate['status_name'] != 'В' ) {
+                    if ( $valDate['dayType'] != 1 ) {
                         $dateEnd = $keyDate;
                         if ($isFirstWorkDay){
                             $dateStart = $keyDate;
