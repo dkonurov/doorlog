@@ -146,34 +146,33 @@ class Users extends Model{
      */
     public function checkUserAttr($email, $position, $department, $timesheetid = 1){
         $errors = array();
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Email';
         }
-        if (!$timesheetid || !$this->checkTimesheetid($timesheetid)){
+        if (!$timesheetid || !$this->checkTimesheetId($timesheetid)) {
             $errors[] = 'Табельный номер уже существует';
         }
 
-        if (!$position){
+        if (!$position) {
             $errors[] = 'Должность';
         }
 
-        if (!$department){
+        if (!$department) {
             $errors[] = 'Отдел';
         }
         return $errors;
     }
 
-    /** 
-     * Check unique timesheetid
+    /** Check unique timesheetd
      * @param int $timesheetid
      * @return bool
      */
-    public function checkTimesheetid($timesheetid)
+    public function checkTimesheetId($timesheetId)
     {
         $q = "SELECT timesheetid FROM user WHERE timesheetid = :timesheetid";
-        $params['timesheetid'] = $timesheetid;
+        $params['timesheetid'] = $timesheetId;
         $result = $this->fetchOne($q, $params);
-        if (is_numeric($result['timesheetid']) && $result != 0){
+        if (is_numeric($result['timesheetid']) && $result != 0) {
             return false;
         } else {
             return true;

@@ -76,7 +76,7 @@
                             <input type="text" name="middleName" value="{if isset($userId)}{$userInfo['middle_name']}{/if}" id="middleName">
                         </td>
                     </tr>
-                    <tr id="depart" class="other worker">
+                    <tr id="depart" {if !$userInfo['department_id']} class="other worker hidden" {else} class="other worker" {/if}>
                         <td>Отдел*</td>
                         <td>
                             <select form='user' name="department" id="department">
@@ -94,7 +94,7 @@
                             </select>
                         </td>
                     </tr>
-                    <tr id="email" class="other worker" {if isset($userId) && $userInfo['email'] == "" } class="hidden" {/if}>
+                    <tr id="email" {if isset($userId) && $userInfo['email'] == "" } class="other worker hidden" {else} class="other worker" {/if}>
                         <td>Email*</td>
                         <td>
                             <input type="text" maxlength="45" size="40" name="email" id="email-val"
@@ -103,7 +103,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id="show-in-timesheet" class="other outside-worker worker" {if isset($userId) && $userInfo['timesheetid'] == 0 } class="hidden" {/if}>
+                    <tr id="show-in-timesheet" {if isset($userId) && $userInfo['timesheetid'] == 0 } class="other outside-worker worker hidden" {else} class="other outside-worker worker" {/if}>
                         <td>Выводить в табеле</td>
                         <td>
                             {if isset($userId)}
@@ -119,7 +119,7 @@
                             {/if}
                         </td>
                     </tr>
-                    <tr id = 'tid' class="other outside-worker worker" {if isset($userId) && $userInfo['timesheetid'] == 0 } class="hidden" {/if}>
+                    <tr id = 'tid' {if isset($userId) && $userInfo['timesheetid'] == 0 } class="other outside-worker worker hidden" {else} class="other outside-worker worker" {/if}>
                         <td>Табельный номер*</td>
                         <td>
                             <input type="text" maxlength="6" size="40" name="timesheetid" id="timesheetid"
@@ -128,7 +128,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id="permission" class="other worker" {if isset($userId) && $userInfo['email'] == "" } class="hidden" {/if}>
+                    <tr id="permission" {if isset($userId) && $userInfo['email'] == "" } class="other worker hidden" {else} class="other worker hidden" {/if}>
                         <td>Права доступа</td>
                         <td>
                             <select name="role">
@@ -145,7 +145,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id="birthday" class="other worker" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
+                    <tr id="birthday" {if isset($userId) && $userInfo['email'] == ""} class="other worker hidden" {else} class="other worker" {/if}>
                         <td>Дата рождения</td>
                         <td>
                             <input name="birthday" id="datepicker" type="text"
@@ -156,7 +156,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id="startwork" class="other worker" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
+                    <tr id="startwork" {if isset($userId) && $userInfo['email'] == ""} class="other worker hidden" {else} class="other worker" {/if}>
                         <td>Дата принятия</td>
                         <td>
                             <input name="startwork" id="datepicker-start" type="text"
@@ -167,7 +167,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id="endwork" class="other worker" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
+                    <tr id="endwork" {if isset($userId) && $userInfo['email'] == ""} class="other worker hidden" {else} class="other worker hidden" {/if}>
                         <td>Дата увольнения</td>
                         <td>
                             <input name="endwork" id="datepicker-end" type="text"
