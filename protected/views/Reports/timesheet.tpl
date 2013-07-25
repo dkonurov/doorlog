@@ -12,7 +12,7 @@
 {block name="content"}
 Отчет за месяц:
 <form id="timesheet" action="{$_root}/reports/timesheet">
-    <input form="timesheet" name="date" type="text" id="datepicker" class="withoutDays" value="{$date}" />
+    <input form="timesheet" name="date" type="text" id="datepicker" class="months-only" value="{$date}" />
 </form>
 
 <input form = "timesheet" type="submit" id="add" value = "Сформировать" class="btn btn-success" >

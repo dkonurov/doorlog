@@ -130,7 +130,7 @@ input[type = "checkbox"] {
     margin-bottom: 0;
 }
 
-.disableDays .ui-datepicker-calendar {
+.disable-days .ui-datepicker-calendar {
     display: none;
 }
 

@@ -13,26 +13,26 @@
     {block name="pagetitle"}<h1> Отчет по посещаемости пользователя </h1>{/block}
     {block name="content"}
 
-        <form id = "reports" type='GET' action = "{$_root}/reports/timeoffsuser">
+        <form id="reports" action="{$_root}/reports/timeoffsuser">
 
         <div id="user">
             {$userSelected=0}
-            <select id='user_id' name = 'user_id'>
+            <select id="user_id" name="user_id">
             {foreach from=$allUsers item=user}
             {if {$user['id']} == {$smarty.get.user_id}}
-                <option value = "{$user['id']}" {$userSelected=$user['id']} selected> {$user['name']} </option>
+                <option value="{$user['id']}" {$userSelected=$user['id']} selected> {$user['name']} </option>
             {else}
-                <option value = "{$user['id']}"> {$user['name']} </option>
+                <option value="{$user['id']}"> {$user['name']} </option>
             {/if}
             {/foreach}
             </select>
         </div>
 
-        <label for = "datepicker"> Дата </label>
-        <input name = "date" type="text" id="datepicker" class='withoutDays' value = "{$timeoffsAttr['date']|date_format:"%m.%Y"}" />
+        <label for="datepicker"> Дата </label>
+        <input name="date" type="text" id="datepicker" value="{$timeoffsAttr['date']|date_format:"%m.%Y"}" />
 
     </form>
-    <input form = "reports" type="submit" id="add" value = "Сформировать" class="btn btn-success" >
+    <input form="reports" type="submit" id="add" value="Сформировать" class="btn btn-success" >
     <br>
     <br>
     <div class="span7">

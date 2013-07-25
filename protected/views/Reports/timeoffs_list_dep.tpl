@@ -28,7 +28,7 @@
         </div>
 
         <label for="datepicker"> Дата </label>
-        <input name="date" type="text" id="datepicker"  value="{$reportParams['date']}" />
+        <input name="date" type="text" id="datepicker" value="{$reportParams['date']}" />
 
     </form>
     <input form="reports" type="submit" id="add" value="Сформировать" class="btn btn-success" >

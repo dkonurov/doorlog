@@ -3,7 +3,7 @@ $(document).ready(function () {
            $("div#office").hide();
         }
         $("select#timeoff_type").change(function() {
-            selectedVal = $(this).find(":selected").val();
+            var selectedVal = $(this).find(":selected").val();
             if (selectedVal == otherOffice) {
                 $("div#office").show();
             } else {
@@ -13,7 +13,7 @@ $(document).ready(function () {
         $('form#timeoffs').submit(function(e) {
             if ($("div#office").is(':visible')) {
                 if ($("#other_office").val().length == 0) {
-                    alert('Поле рабочее время обезательно для заполнения');
+                    alert('Поле рабочее время обязательно для заполнения');
                     e.preventDefault();
                 }
                 if ($("#other_office").val() < 0 || $("#other_office").val() > 8) {
