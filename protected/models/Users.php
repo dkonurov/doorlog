@@ -149,8 +149,8 @@ class Users extends Model{
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $errors[] = 'Email';
         }
-        if (!$timesheetid || !is_numeric($timesheetid)){
-            $errors[] = 'Табельный номер';
+        if (!$timesheetid || !$this->checkTimesheetid($timesheetid)){
+            $errors[] = 'Табельный номер уже существует';
         }
 
         if (!$position){
@@ -163,8 +163,24 @@ class Users extends Model{
         return $errors;
     }
 
-    /**
-     * Get all user attributes by email
+    /** 
+     * Check unique timesheetid
+     * @param int $timesheetid
+     * @return bool
+     */
+    public function checkTimesheetid($timesheetid)
+    {
+        $q = "SELECT timesheetid FROM user WHERE timesheetid = :timesheetid";
+        $params['timesheetid'] = $timesheetid;
+        $result = $this->fetchOne($q, $params);
+        if (is_numeric($result['timesheetid']) && $result != 0){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /** Get all user attributes by email
      * @param string $email
      * @return array
      */

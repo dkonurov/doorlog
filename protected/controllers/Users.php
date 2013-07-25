@@ -307,17 +307,14 @@ class Users extends Controller {
             $inputErrors = array();
             switch ($workertype) {
                 case 1:
-                    print 'это был штатник';
                     $inputErrors = $users->checkUserAttr($email, $position, $department, $timesheetid);
                     break;
                 case 2:
-                print 'это был внештатник';
                     $isShown = 0;
                     $timesheetid = 0;
                     $inputErrors = $users->checkUserAttr($email, $position, $department);
                     break;
                 case 3:
-                    print 'это был хз кто';
                     $department = NULL;
                     $timesheetid = 0;
                     $isShown = 0;
