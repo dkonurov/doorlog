@@ -37,6 +37,11 @@
         {include file='protected/views/dialog.tpl'}
 
         <form method="POST" id="user">
+            <input type="radio" id="worker" name="workertype" value="1"{if !isset($userId)} checked="checksdfsdfed"{/if}/> Сотрудник &nbsp
+            <input type="radio" id="outside-worker" name="workertype" value="2"{if isset($userId) && $userInfo['timesheetid'] == 0}checked="checked"{/if}/> Внештатный сотрудник &nbsp
+            <input type="radio" id="other" name="workertype" value="3"{if isset($userId) && $userInfo['email'] == ""}checked="checked"{/if}/> Другой &nbsp
+            <br>
+            <br>
             <div class="span7">
                 <table class='table table-bordered'>
                     {if !isset($userId)}
@@ -61,7 +66,7 @@
                         <td>Отчество*</td>
                         <td><input type="text" name="middleName" value="{if isset($userId)}{$userInfo['middle_name']}{/if}" id="middleName"></td>
                     </tr>
-                    <tr>
+                    <tr id="depart">
                         <td>Отдел*</td>
                         <td>
                             <select form='user' name="department" id="department">
@@ -79,16 +84,27 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="email" {if isset($userId) && $userInfo['email'] == "" } class="hidden" {/if}>
                         <td>Email*</td>
                         <td>
-                            <input type="text" maxlength="45" size="40" name="email" id="email"
+                            <input type="text" maxlength="45" size="40" name="email" id="email-val"
                                 {if isset($userId)}
                                 value={$userInfo['email']}
                             {/if}/>
                         </td>
                     </tr>
-                    <tr id = 'tid'>
+                    <tr id="show-in-timesheet" {if isset($userId) && $userInfo['timesheetid'] == 0 } class="hidden" {/if}>
+                        <td>Выводить в табеле</td>
+                        <td>
+                            {if isset($userId)}
+                                <p><input name="is_shown" id='is_shown' type="checkbox"
+                                    {if $userInfo['is_shown'] != 0} value="1" checked="checked" {else} value="1"{/if}/>Выводить в табеле</p>
+                            {else}
+                                <p><input name="is_shown" id='is_shown' type="checkbox" value="1" checked/></p>
+                            {/if}
+                        </td>
+                    </tr>
+                    <tr id = 'tid' {if isset($userId) && $userInfo['timesheetid'] == 0 } class="hidden" {/if}>
                         <td>Табельный номер*</td>
                         <td>
                             <input type="text" maxlength="6" size="40" name="timesheetid" id="timesheetid"
@@ -97,7 +113,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="permission" {if isset($userId) && $userInfo['email'] == "" } class="hidden" {/if}>
                         <td>Права доступа</td>
                         <td>
                             <select name="role">
@@ -114,7 +130,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="birthday" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
                         <td>Дата рождения</td>
                         <td>
                             <input name="birthday" id="datepicker" type="text"
@@ -125,7 +141,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="startwork" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
                         <td>Дата принятия</td>
                         <td>
                             <input name="startwork" id="datepicker-start" type="text"
@@ -136,7 +152,7 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="endwork" {if isset($userId) && $userInfo['email'] == ""} class="hidden" {/if}>
                         <td>Дата увольнения</td>
                         <td>
                             <input name="endwork" id="datepicker-end" type="text"
@@ -147,23 +163,13 @@
                             {/if}/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="halftime" {if isset($userId) && $userInfo['email'] == "" } class="hidden" {/if}>
                         <td>На полставки </td>
                         <td>
                             {if isset($userId)}
-                                <p><input name="halftime" id='halftime' type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
+                                <p><input name="halftime" id='halftime-val' type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}></p>
                             {else}
-                                <p><input name="halftime" id='halftime' type="checkbox" value="1">Полставки</p>
-                            {/if}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Выводить в табеле </td>
-                        <td>
-                            {if isset($userId)}
-                                <p><input name="is_shown" id='is_shown' type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в табеле</p>
-                            {else}
-                                <p><input name="is_shown" id='is_shown' type="checkbox" value="1" checked/></p>
+                                <p><input name="halftime" id='halftime-val' type="checkbox" value="1">Полставки</p>
                             {/if}
                         </td>
                     </tr>
