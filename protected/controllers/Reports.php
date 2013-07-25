@@ -27,51 +27,40 @@ class Reports extends Controller {
      * @return void
      */
     public function timeoffsDepAction() {
-        if(!Acl::checkPermission('timeoffs_reports')){
+        if (!Acl::checkPermission('timeoffs_reports')) {
             $this->render("errorAccess.tpl");
         }
-        $timeoffs = array();
-        $users = array();
-        $reportAllDaysArray = array();
-        $name = array();
-        $totalDepInfo = array();
+        $date = date('m.Y');
+        $dep = array();
+        $reportResults = array();
+
+        $usersModel = new UsersModel();
+        $depModel = new DepartmentModel();
+
+        if (isset($_GET['date']) && !empty($_GET['date'])) {
+            $date = $_GET['date'];
+            $formattedDate = date('Y-m', strtotime('01.'.$date));
     
-        $timeoffsAllUsers = array();
-        $user = new UsersModel();
-        $dep = new DepartmentModel();
-        $date = date('m-Y');
-        $id = '';
-        if (isset($_GET['date']) && !empty($_GET['date'])){
-            $date = $queryDate = $_GET['date'];
-            $date = strtotime(strrev(strrev($date).'.10'));
-            $date = date('Y-m', $date);
-    
-            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ){
-                $totalDepInfo['statuses'] = $user->getUserStatuses();
-                $depInfo = $dep->getDepById($_GET['dep_id']);
-                $name['dep'] = $depInfo['name'];
-                $users = $dep->getUsers($_GET['dep_id']);
+            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ) {
+                $dep = $depModel->getDepById($_GET['dep_id']);
+                $users = $depModel->getUsers($_GET['dep_id']);
                 foreach ($users as $currentUser) {
-                    $totalUserStats[] = array(
-                            'id' => $currentUser['id'],
-                            'name' => $currentUser['name'],
-                            'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $date))
+                    $reportResults[] = array(
+                        'id' => $currentUser['id'],
+                        'name' => $currentUser['name'],
+                        'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate))
                     );
-                    $totalDepInfo['totalUserStats'] = $totalUserStats;
-                    $totalDepInfo['date'] = $queryDate;
                 }
             }
         }
-        $allDep = $dep->getMenuDepartments();
-        $statuses = $user->getUserStatuses();
-        $timeoffsAttr = array('date' => $date, 'name' => $name, 'id' => $id);
-        $this->render("Reports/timeoffs_list_dep.tpl" , array('statuses' => $statuses,
-                'timeoffsAttr' => $timeoffsAttr,
-                'allDep' => $allDep,
-                'users' => $users,
-                'reportAllDaysArray' => $reportAllDaysArray,
-                'name' => $name,
-                'totalDepInfo' => $totalDepInfo));
+        $allDeps = $depModel->getMenuDepartments();
+        $allStatuses = $usersModel->getUserStatuses();
+        $this->render("Reports/timeoffs_list_dep.tpl" , array(
+            'allDeps' => $allDeps,
+            'allStatuses' => $allStatuses,
+            'reportResults' => $reportResults,
+            'reportParams' => array('date' => $date, 'dep' => $dep)
+        ));
     }
     
     /**
@@ -79,7 +68,7 @@ class Reports extends Controller {
      * @return void
      */
     public function timeoffsUserAction() {
-        if(!Acl::checkPermission('timeoffs_reports')){
+        if (!Acl::checkPermission('timeoffs_reports')) {
             $this->render("errorAccess.tpl");
         }
         $timeoffs = array();
