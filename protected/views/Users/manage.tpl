@@ -37,7 +37,10 @@
         {include file='protected/views/dialog.tpl'}
 
         <form method="POST" id="user">
-            <input type="radio" id="worker" name="workertype" value="1"{if !isset($userId)} checked="checked"{/if}/>
+            <input type="radio" id="worker" name="workertype" value="1"{if !isset($userId)} checked="checked"{else}
+                {if isset($userId) && $userInfo['timesheetid'] != 0} checked="checked"
+                {/if}
+            {/if}/>
             <label for="worker">Сотрудник</label>
 
             <input type="radio" id="outside-worker" name="workertype" value="2"{if isset($userId) && $userInfo['timesheetid'] == 0}checked="checked"{/if}/>
