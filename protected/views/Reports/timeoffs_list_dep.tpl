@@ -13,46 +13,45 @@
     {block name="pagetitle"}<h1> Отчет по посещаемости отдела</h1>{/block}
     {block name="content"}
 
-        <form id = "reports" type='GET' action = "{$_root}/reports/timeoffsdep">
+        <form id="reports" action="{$_root}/reports/timeoffsdep">
 
         <div id="dep">
             <select id='dep_id' name='dep_id'>
-            {foreach from=$allDep item=dep}
-            {if {$dep['id']} == {$smarty.get.dep_id}}
-                <option value = "{$dep['id']}" {$depSelected=$dep['id']} selected> {$dep['name']} </option>
-            {else}
-                <option value = "{$dep['id']}"> {$dep['name']} </option>
-            {/if}
+            {foreach from=$allDeps item=dep}
+                {if {$dep['id']} == {$smarty.get.dep_id}}
+                    <option value="{$dep['id']}" {$depSelected=$dep['id']} selected> {$dep['name']} </option>
+                {else}
+                    <option value="{$dep['id']}"> {$dep['name']} </option>
+                {/if}
             {/foreach}
             </select>
         </div>
 
-
-        <label for = "datepicker"> Дата </label>
-        <input name = "date" type="text" id="datepicker" class='withoutDays' value = "{$timeoffsAttr['date']|date_format:"%m.%Y"}" />
+        <label for="datepicker"> Дата </label>
+        <input name="date" type="text" id="datepicker"  value="{$reportParams['date']}" />
 
     </form>
-    <input form = "reports" type="submit" id="add" value = "Сформировать" class="btn btn-success" >
+    <input form="reports" type="submit" id="add" value="Сформировать" class="btn btn-success" >
     <br>
     <br>
-    <div class="span7">
+    <div class="span9">
     
-    {if $totalDepInfo}
+    {if $reportResults}
         <br>
         <br>
-        <table class="table table-bordered table-striped table-hover reports">
+        <table class="table table-bordered table-striped table-hover">
             <thead>
                 <th> Имя </th>
                 <th> Часы </th>
-                {foreach from=$totalDepInfo['statuses'] item=totalUserInfo}
-                    <th>{$totalUserInfo['name']}</th>
+                {foreach from=$allStatuses item=status}
+                    <th>{$status['name']}</th>
                 {/foreach}
             </thead>
-            {foreach from=$totalDepInfo['totalUserStats'] item=user}
+            {foreach from=$reportResults item=user}
             <tr>
-                <td><a href="{$_root}/reports/timeoffsuser?user_id={$user['id']}&date={$totalDepInfo['date']}">{$user['name']}</a></td>
-                {foreach from=$user['stats'] item=userStats}
-                <td>{$userStats}</td>
+                <td><a href="{$_root}/reports/timeoffsuser?user_id={$user['id']}&date={$reportParams['date']}">{$user['name']}</a></td>
+                {foreach from=$user['stats'] item=value}
+                <td>{$value}</td>
                 {/foreach}
             </tr>
             {/foreach}
