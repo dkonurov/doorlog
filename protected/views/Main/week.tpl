@@ -1,25 +1,27 @@
-<table class="table table-bordered">
+<table class="table table-bordered table-hover">
     <colgroup>
         <col class="col-small">
         <col class="col-small">
     </colgroup>
     <thead>
-        <th> День </th>
-        <th> Дата </th>
-        <th> Время в офисе </th>
+        <tr>
+            <th> День </th>
+            <th> Дата </th>
+            <th> Время в офисе </th>
+        </tr>
     </thead>
     
     <tbody>
         {* Перебираем по каждому дню недели (weekDays), в независимости от наличия входов/выходов *}
         {foreach from=$weekDays item=dayInfo}
-            <tr {if $holidays[$dayInfo['date']|date_format:"%d.%m.%Y"]==1} class="info" {/if}>
+            <tr {if $holidays[$dayInfo['date']|date_format:"%d.%m.%Y"]==1} class="days-off" {/if}>
                 <td> {$dayInfo['name']} </td>
                 <td> {$dayInfo['date']|date_format:"%d.%m.%Y"} </td>
                 <td>
                     {if isset($week['days'][$dayInfo['date']])}
                         {if ($week['days'][$dayInfo['date']]['setTimer'])}
                             {$timer = true}
-                            <span class='timer' data-unixtime="{$week['days'][$dayInfo['date']]['sum']}"> </span>
+                            <span class="timer" data-unixtime="{$week['days'][$dayInfo['date']]['sum']}"> </span>
                         {else}
                             {$week['days'][$dayInfo['date']]['sum']|formatDate}
                         {/if}
@@ -30,11 +32,11 @@
             </tr>
         {/foreach}
 
-        <tr>
-            <td colspan=2> Всего </td>
+        <tr class="total">
+            <td colspan="2"> Всего </td>
             <td>
                 {if isset($timer)}
-                    <span class='timer' data-unixtime="{$week['total_sum']}"> </span>
+                    <span class="timer" data-unixtime="{$week['total_sum']}"> </span>
                 {else}
                     {$week['total_sum']|formatDate}
                 {/if}

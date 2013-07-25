@@ -1,12 +1,14 @@
-<table class="table table-bordered">
+<table class="table table-bordered table-hover">
     <colgroup>
         <col class="col-small">
         <col class="col-small">
     </colgroup>
     <thead>
-        <th>Вход</th>
-        <th>Выход</th>
-        <th>Время в офисе</th>
+        <tr>
+            <th>Вход</th>
+            <th>Выход</th>
+            <th>Время в офисе</th>
+        </tr>
     </thead>
     <tbody>
         {if ($day && $day['periods'])}

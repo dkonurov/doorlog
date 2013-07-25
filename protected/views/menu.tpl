@@ -25,7 +25,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         {if 'timeoffs_reports'|checkPermission}
-                        <li><a href="{$_root}/reports/timeoffs">По посещаемости</a></li>
+                        <li><a href="{$_root}/reports/timeoffsuser">По посещаемости пользователя</a></li>
+                        <li><a href="{$_root}/reports/timeoffsdep">По посещаемости отделов</a></li>
                         {/if}
                         {if 'officeload_reports'|checkPermission}
                         <li><a href="{$_root}/reports/officeload">По загрузке</a></li>

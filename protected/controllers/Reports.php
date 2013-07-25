@@ -21,11 +21,12 @@ class Reports extends Controller {
     const SHORTDAYHALFWORK = 3;
     const NULLDAY = "";
 
+    
     /**
-    * Render page of reports by user or all users in current department
-    * @return void
-    */
-    public function timeoffsAction() {
+     * Render page of reports by all users in current department
+     * @return void
+     */
+    public function timeoffsDepAction() {
         if(!Acl::checkPermission('timeoffs_reports')){
             $this->render("errorAccess.tpl");
         }
@@ -34,7 +35,59 @@ class Reports extends Controller {
         $reportAllDaysArray = array();
         $name = array();
         $totalDepInfo = array();
-
+    
+        $timeoffsAllUsers = array();
+        $user = new UsersModel();
+        $dep = new DepartmentModel();
+        $date = date('m-Y');
+        $id = '';
+        if (isset($_GET['date']) && !empty($_GET['date'])){
+            $date = $queryDate = $_GET['date'];
+            $date = strtotime(strrev(strrev($date).'.10'));
+            $date = date('Y-m', $date);
+    
+            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ){
+                $totalDepInfo['statuses'] = $user->getUserStatuses();
+                $depInfo = $dep->getDepById($_GET['dep_id']);
+                $name['dep'] = $depInfo['name'];
+                $users = $dep->getUsers($_GET['dep_id']);
+                foreach ($users as $currentUser) {
+                    $totalUserStats[] = array(
+                            'id' => $currentUser['id'],
+                            'name' => $currentUser['name'],
+                            'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $date))
+                    );
+                    $totalDepInfo['totalUserStats'] = $totalUserStats;
+                    $totalDepInfo['date'] = $queryDate;
+                }
+            }
+        }
+        $allDep = $dep->getMenuDepartments();
+        $statuses = $user->getUserStatuses();
+        $timeoffsAttr = array('date' => $date, 'name' => $name, 'id' => $id);
+        $this->render("Reports/timeoffs_list_dep.tpl" , array('statuses' => $statuses,
+                'timeoffsAttr' => $timeoffsAttr,
+                'allDep' => $allDep,
+                'users' => $users,
+                'reportAllDaysArray' => $reportAllDaysArray,
+                'name' => $name,
+                'totalDepInfo' => $totalDepInfo));
+    }
+    
+    /**
+     * Render page of reports by user
+     * @return void
+     */
+    public function timeoffsUserAction() {
+        if(!Acl::checkPermission('timeoffs_reports')){
+            $this->render("errorAccess.tpl");
+        }
+        $timeoffs = array();
+        $users = array();
+        $reportAllDaysArray = array();
+        $name = array();
+        $totalDepInfo = array();
+    
         $timeoffsAllUsers = array();
         $user = new UsersModel();
         $dep = new DepartmentModel();
@@ -50,37 +103,21 @@ class Reports extends Controller {
                 $name['user'] = $userInfo['name'];
                 $id = $_GET['user_id'];
             }
-
-            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ){
-                $totalDepInfo['statuses'] = $user->getUserStatuses();
-                $depInfo = $dep->getDepById($_GET['dep_id']);
-                $name['dep'] = $depInfo['name'];
-                $users = $dep->getUsers($_GET['dep_id']);
-                foreach ($users as $currentUser) {
-                    $totalUserStats[] = array(
-                        'id' => $currentUser['id'],
-                        'name' => $currentUser['name'],
-                        'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $date))
-                    );
-                    $totalDepInfo['totalUserStats'] = $totalUserStats;
-                    $totalDepInfo['date'] = $queryDate;
-                }
-            }
         }
         $allUsers = $user->getRegistered();
         $allDep = $dep->getMenuDepartments();
         $statuses = $user->getUserStatuses();
         $timeoffsAttr = array('date' => $date, 'name' => $name, 'id' => $id);
-        $this->render("Reports/timeoffs_list.tpl" , array('statuses' => $statuses,
-            'timeoffsAttr' => $timeoffsAttr,
-            'allUsers' => $allUsers,
-            'allDep'=>$allDep,
-            'users'=>$users,
-            'reportAllDaysArray' => $reportAllDaysArray,
-            'name' => $name,
-            'totalDepInfo' => $totalDepInfo));
+        $this->render("Reports/timeoffs_list_user.tpl" , array('statuses' => $statuses,
+                'timeoffsAttr' => $timeoffsAttr,
+                'allUsers' => $allUsers,
+                'allDep' => $allDep,
+                'users' => $users,
+                'reportAllDaysArray' => $reportAllDaysArray,
+                'name' => $name,
+                'totalDepInfo' => $totalDepInfo));
     }
-
+    
     /**
     * Render page of graph exits and entrances
     * @return void

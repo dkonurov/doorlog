@@ -13,15 +13,20 @@
 
 {block name="content"}
     <div class="span7">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hover">
             <colgroup>
                 <col class="col-large">
                 <col class="col-small">
             </colgroup>
-            <th> Название отдела </th>
-            <th> Сотрудников </th>
-            <th> Начальник </th>
+            <thead>
+                <tr>
+                    <th> Название отдела </th>
+                    <th> Количество сотрудников </th>
+                    <th> Начальник </th>
+                </tr>
+            </thead>
 
+            <tbody>
             {foreach from=$departments item=department}
                 <tr>
                     <td>
@@ -35,6 +40,7 @@
                     <td> {$department['chief_name']} </td>
                 </tr>
             {/foreach}
+            </tbody>
         </table>
     </div>
     

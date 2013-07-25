@@ -16,13 +16,15 @@
                 <br/>
                 <br/>
             {/if}
-            <table class="table table-bordered">
+            <table class="table table-bordered table-striped table-hover">
                 <thead>
-                    <th>№</th>
-                    <th>Имя</th>
-                    <th>Email</th>
-                    <th>Отдел</th>
-                    <th>Должность</th>
+                    <tr>
+                        <th>№</th>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Отдел</th>
+                        <th>Должность</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {$num=10*$currentPage-9}

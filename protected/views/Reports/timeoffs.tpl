@@ -21,11 +21,15 @@
         <div id="collapse{$tableId}" class="accordion-body collapse out">
             <div class="accordion-inner">
 {/if}
-        <table class="table table-bordered reports">
-            <th> День недели </th>
-            <th> Дата </th>
-            <th> Время </th>
-            <th> Тип отгула </th>
+        <table class="table table-bordered table-striped table-hover reports">
+            <thead>
+                <tr>
+                    <th> День недели </th>
+                    <th> Дата </th>
+                    <th> Время </th>
+                    <th> Тип отгула </th>
+                </tr>
+            </thead>
             {foreach from=$reportAllDaysArray item=timeoff}
                 {if $timeoff['dayType']==1}
                     <tr class='error'>
@@ -39,7 +43,6 @@
                 </tr>
             {/foreach}
     </table>
-    <a class="btn btn-primary" href="/reports/download?user_id={if $userSelected}{$userSelected}{else}{$tableId}{/if}&date={$timeoffsAttr['date']}">Сохранить</a>
 {if isset($userName)}
             </div>
         </div>

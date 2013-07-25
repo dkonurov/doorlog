@@ -13,14 +13,16 @@
 
 {block name="content"}
     <div class="span7">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hover">
             <colgroup>
                 <col class="col-large">
                 <col class="col-small">
             </colgroup>
             <thead>
-                <th> Название </th>
-                <th> Сотрудников </th>
+                <tr>
+                    <th> Название </th>
+                    <th> Сотрудников </th>
+                </tr>
             </thead>
             <tbody>
                 {foreach from=$positions item=position}
