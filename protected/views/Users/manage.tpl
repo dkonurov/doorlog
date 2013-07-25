@@ -80,14 +80,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Права доступа</td>
-                        <td>
-                            <select name="role">
-                                {html_options options=$roles selected={$userRole['0']['id']}}
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Email*</td>
                         <td>
                             <input type="text" maxlength="45" size="40" name="email" id="email"
@@ -96,8 +88,25 @@
                             {/if}/>
                         </td>
                     </tr>
+                    <tr id = 'tid'>
+                        <td>Табельный номер*</td>
+                        <td>
+                            <input type="text" maxlength="6" size="40" name="timesheetid" id="timesheetid"
+                                {if isset($userId) && $userInfo['timesheetid'] != 0}
+                                value={$userInfo['timesheetid']}
+                            {/if}/>
+                        </td>
+                    </tr>
                     <tr>
-                        <td>Телефон*</td>
+                        <td>Права доступа</td>
+                        <td>
+                            <select name="role">
+                                {html_options options=$roles selected={$userRole['0']['id']}}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Телефон</td>
                         <td>
                             <input type="text" maxlength="11" name="phone" id="phone"
                             {if isset($userId)}
@@ -142,9 +151,9 @@
                         <td>На полставки </td>
                         <td>
                             {if isset($userId)}
-                                <p><input name="halftime" type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
+                                <p><input name="halftime" id='halftime' type="checkbox" value="1"{if $userInfo['halftime']} checked{/if}>Полставки</p>
                             {else}
-                                <p><input name="halftime" type="checkbox" value="1">Полставки</p>
+                                <p><input name="halftime" id='halftime' type="checkbox" value="1">Полставки</p>
                             {/if}
                         </td>
                     </tr>
@@ -152,9 +161,9 @@
                         <td>Выводить в табеле </td>
                         <td>
                             {if isset($userId)}
-                                <p><input name="is_shown" type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в табеле</p>
+                                <p><input name="is_shown" id='is_shown' type="checkbox" value="1"{if $userInfo['is_shown']} checked{/if}/>Выводить в табеле</p>
                             {else}
-                                <p><input name="is_shown" type="checkbox" value="1" checked/>Выводить в отчётах</p>
+                                <p><input name="is_shown" id='is_shown' type="checkbox" value="1" checked/></p>
                             {/if}
                         </td>
                     </tr>

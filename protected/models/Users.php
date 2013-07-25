@@ -110,9 +110,9 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $tel, $bday, $swork, $ework, $is_shown, $halftime){
-        $add="INSERT INTO user(personal_id, first_name, second_name, middle_name, position_id, email, password, salt, department_id, created, birthday, startwork, endwork, phone, is_shown, halftime)
-            VALUES (:user, :firstName, :secondName, :middleName, :position,:email,:hash,:salt,:department, NOW(), :bday, :startwork, :endwork, :tel, :is_shown, :halftime)";
+    public function insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $tel, $bday, $swork, $ework, $is_shown, $halftime, $timesheetid){
+        $add="INSERT INTO user(personal_id, first_name, second_name, middle_name, position_id, email, timesheetid, password, salt, department_id, created, birthday, startwork, endwork, phone, is_shown, halftime)
+            VALUES (:user, :firstName, :secondName, :middleName, :position,:email, :timesheetid, :hash,:salt,:department, NOW(), :bday, :startwork, :endwork, :tel, :is_shown, :halftime)";
         $params=array();
         $params['user'] = $user;
         $params['secondName'] = $secondName;
@@ -129,6 +129,8 @@ class Users extends Model{
         $params['tel'] = $tel;
         $params['is_shown'] = $is_shown;
         $params['halftime'] = $halftime;
+        $params['timesheetid'] = $timesheetid;
+
 
         $result = $this->execute($add,$params);
         return $result;
@@ -142,14 +144,13 @@ class Users extends Model{
      * @param integer $department
      * @return array
      */
-    public function checkUserAttr($email, $tel, $position, $department){
+    public function checkUserAttr($email, $position, $department, $timesheetid = 1){
         $errors = array();
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $errors[] = 'Email';
         }
-
-        if (!is_numeric($tel)){
-            $errors[] = 'Телефон';
+        if (!$timesheetid || !is_numeric($timesheetid)){
+            $errors[] = 'Табельный номер';
         }
 
         if (!$position){
@@ -278,6 +279,7 @@ class Users extends Model{
               u.middle_name,
               u.position_id,
               u.department_id,
+              u.timesheetid,
               u.password,
               u.salt,
               t.name,
@@ -433,7 +435,7 @@ class Users extends Model{
      * @param bool $is_shown
      * @return bool
      */
-    public function editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $is_shown, $halftime){
+    public function editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $is_shown, $halftime, $timesheetid){
         $params = array();
         $params['id'] = $id;
         $params['secondName'] = $secondName;
@@ -448,6 +450,7 @@ class Users extends Model{
         $params['phone'] = $phone;
         $params['is_shown'] = $is_shown;
         $params['halftime'] = $halftime;
+        $params['timesheetid'] = $timesheetid;
         $q= "UPDATE user
             SET position_id = (:position),
             second_name = (:secondName),
@@ -460,7 +463,8 @@ class Users extends Model{
             endwork = (:endwork),
             phone = (:phone),
             is_shown = (:is_shown),
-            halftime = (:halftime)
+            halftime = (:halftime),
+            timesheetid = (:timesheetid)
             WHERE id = (:id)";
         $result = $this->execute($q, $params);
         return $result;
@@ -548,6 +552,17 @@ class Users extends Model{
         $q="SELECT addtime FROM `status` WHERE type_id=:type";
         $params['type'] = $type;
         $result = $this->fetchOne($q, $params);
+        return $result;
+    }
+
+    /**
+     * Get all users for timesheet
+     * @return array
+    */
+    public function getAllUsersForTimesheet(){
+        $q = "SELECT `id`, `first_name`, `second_name`, `middle_name`, `position_id`,  `startwork`, `endwork`
+            FROM `user` WHERE `is_shown` = 1";
+        $result = $this->fetchAll($q);
         return $result;
     }
 }
