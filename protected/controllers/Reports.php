@@ -54,7 +54,7 @@ class Reports extends Controller {
                 foreach ($users as $currentUser) {
                     $totalUserStats[] = array(
                             'id' => $currentUser['id'],
-                            'name' => $currentUser['name'],
+                            'name' => $currentUser['s_name'].' '.$currentUser['f_name'],
                             'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $date))
                     );
                     $totalDepInfo['totalUserStats'] = $totalUserStats;

@@ -26,7 +26,7 @@
                 <tr>
                     <td> Имя </td>
                     <td>
-                        {$userInfo['name']}
+                        {$userInfo['s_name']} {$userInfo['f_name']}
                         {if $userInfo['status']==2}
                             <span class="label label-success">В офисе</span>
                         {else}

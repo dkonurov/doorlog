@@ -32,7 +32,8 @@ class Users extends Model{
         $q= "SELECT
               u.id,
               t.id as personal_id,
-              t.NAME as name,
+              u.second_name as s_name,
+              u.first_name as f_name,
               d.name as department,
               p.name as position,
               u.email as email
@@ -73,20 +74,20 @@ class Users extends Model{
      */
     public function searchByName($name){
         $searchName = '%' . $name . '%';
-        $q="SELECT t.NAME as name,
+        $q="SELECT u.second_name as s_name,
+                u.first_name as f_name,
                 u.id,
                 u.department_id as dep_id,
                 d.name as dep,
                 p.name as pos
             FROM `user` u
-            JOIN `tc-db-main`.`personal` t
-              ON u.personal_id = t.id
             LEFT JOIN department as d
               ON u.department_id = d.id
             LEFT JOIN position as p
               ON u.position_id = p.id
-            WHERE t.NAME LIKE :searchName
-            ORDER BY t.NAME
+            WHERE  CONCAT(u.second_name, u.first_name) LIKE :searchName
+
+            ORDER BY CONCAT(u.second_name, u.first_name)
         ";
         $params=array();
         $params['searchName']=$searchName;
@@ -298,7 +299,8 @@ class Users extends Model{
               u.timesheetid,
               u.password,
               u.salt,
-              t.name,
+              u.second_name as s_name,
+              u.first_name as f_name,
               u.email,
               d.name as department,
               p.name as position,
@@ -309,9 +311,7 @@ class Users extends Model{
               u.created,
               u.is_shown,
               u.halftime
-            FROM `tc-db-main`.`personal` t
-            JOIN `user` u
-              ON t.id = u.personal_id
+            FROM `user` u
             LEFT JOIN `position` p
               ON u.position_id = p.id
             LEFT JOIN `department` d

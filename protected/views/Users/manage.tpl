@@ -2,7 +2,7 @@
 
     {block name="title"}
         {if isset($userId)}
-            Изменить пользователя {$userInfo['name']}
+            Изменить пользователя {$userInfo['s_name']} {$userInfo['f_name']}
         {else}
             Добавить пользователя
         {/if}
@@ -27,7 +27,7 @@
 
     {block name="pagetitle"}
         {if isset($userId)}
-            <h1>Изменить пользователя {$userInfo['name']}</h1>
+            <h1>Изменить пользователя {$userInfo['s_name']} {$userInfo['f_name']}</h1>
         {else}
            <h1>Добавить пользователя</h1>
         {/if}

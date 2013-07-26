@@ -22,9 +22,9 @@
                     <tr>
                         <td>
                             {if 'users_profile'|checkPermission}
-                                <a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['name']}</a>
+                                <a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['s_name']} {$search[$key]['f_name']}</a>
                             {else}
-                                {$search[$key]['name']}
+                                {$search[$key]['s_name']} {$search[$key]['f_name']}
                             {/if}
                         </td>
                         <td>

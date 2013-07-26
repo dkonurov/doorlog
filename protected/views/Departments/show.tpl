@@ -28,7 +28,7 @@
                 <tr>
                     <td>
                     {if 'users_profile'|checkPermission}
-                    <a href='{$_root}/users/profile?id={$user['id']}'> {$user['name']}</a>
+                    <a href='{$_root}/users/profile?id={$user['id']}'> {$user['s_name']} {$user['f_name']}</a>
                     {else}
                     {$user['name']}
                     {/if} 
