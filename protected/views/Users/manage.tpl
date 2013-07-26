@@ -38,7 +38,8 @@
 
         <form method="POST" id="user">
             <input type="radio" id="worker" name="workertype" value="1"{if !isset($userId)} checked="checked"{else}
-                {if isset($userId) && $userInfo['timesheetid'] != 0} checked="checked"
+                {if isset($userId) && $userInfo['timesheetid'] != 0}
+                    checked="checked"
                 {/if}
             {/if}/>
             <label for="worker">Сотрудник</label>
@@ -65,6 +66,9 @@
                         <td>Фамилия*</td>
                         <td>
                             <input type="text" value="{if isset($userId)}{$userInfo['second_name']}{/if}" name="secondName" id="secondName">
+                            <button type=submit class="btn btn-success" id="swap" form="No">
+                                Ф <-> И
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -79,7 +83,7 @@
                             <input type="text" name="middleName" value="{if isset($userId)}{$userInfo['middle_name']}{/if}" id="middleName">
                         </td>
                     </tr>
-                    <tr id="depart" {if !$userInfo['department_id']} class="other worker hidden" {else} class="other worker" {/if}>
+                    <tr id="depart" {if isset($userId) && !$userInfo['department_id']} class="other worker hidden" {else} class="other worker" {/if}>
                         <td>Отдел*</td>
                         <td>
                             <select form='user' name="department" id="department">
