@@ -11,14 +11,19 @@
 
     {block name="content"}
     <div class="span7">
-        <table class="table table-bordered">
-            <th> Имя </th>
-            <th> Должность </th>
-            {if 'users_private_info'|checkPermission || (isset($depName['chief_id']) && ($depName['chief_id']==$userId))}
-                <th> Отработано за неделю </th>
-            {/if}
-            <th> Статус</th>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th> Имя </th>
+                    <th> Должность </th>
+                    {if 'users_private_info'|checkPermission || (isset($depName['chief_id']) && ($depName['chief_id']==$userId))}
+                        <th> Отработано за неделю </th>
+                    {/if}
+                    <th> Статус</th>
+                </tr>
+            </thead>
 
+            <tbody>
             {foreach from=$users item=user}
                 <tr>
                     <td>
@@ -44,6 +49,7 @@
                     </td>
                 </tr>
             {/foreach}
+            </tbody>
        </table>
     </div>
     {/block}

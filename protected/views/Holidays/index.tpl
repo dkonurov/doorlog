@@ -22,29 +22,31 @@
             <label for = "datepicker"> Дата </label>
             <input name = "date" type="text" id="datepicker" value = "{$date}" />
         </form>
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hover">
             <thead>
-                <th> День недели </th>
-                <th> Дата </th>
-                <th> Тип </th>
+                <tr>
+                    <th> День недели </th>
+                    <th> Дата </th>
+                    <th> Тип </th>
+                </tr>
             </thead>
             <tbody>
-            <form method="POST" id="type">
-                {$i=0}
-                {foreach from=$holidays item=holiday}
-                    <tr>
-                        <td>{$holiday['days']}</td>
-                        <td> {$holiday['date']}</td>
-                        <td>
-                            <select class="select {if $holiday['type']==1 or $holiday['type']==2} text-info {/if}" name="{$i}"{if $holiday['trigger']==1} id="holiday"{/if}>
-                                <option value="0"{if $holiday['trigger']==0} selected {/if}>Рабочий</option>
-                                {html_options values=$values output=$types selected=$holiday['type']}
-                            </select>
-                        </td>
-                    </tr>
-                    {$i=$i+1}
-                {/foreach}
-            </form>
+                <form method="POST" id="type">
+                    {$i=0}
+                    {foreach from=$holidays item=holiday}
+                        <tr>
+                            <td>{$holiday['days']}</td>
+                            <td> {$holiday['date']}</td>
+                            <td>
+                                <select class="select {if $holiday['type']==1 or $holiday['type']==2} text-info {/if}" name="{$i}"{if $holiday['trigger']==1} id="holiday"{/if}>
+                                    <option value="0"{if $holiday['trigger']==0} selected {/if}>Рабочий</option>
+                                    {html_options values=$values output=$types selected=$holiday['type']}
+                                </select>
+                            </td>
+                        </tr>
+                        {$i=$i+1}
+                    {/foreach}
+                </form>
             </tbody>
         </table>
     <button form="type" class="btn btn-success" type="submit">Сохранить</button>

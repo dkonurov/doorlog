@@ -11,14 +11,16 @@
 
     {block name="content"}
     <div class="span7">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hover">
             <colgroup>
                 <col class="col-large">
                 <col class="col-small">
             </colgroup>
             <thead>
-                <th>Роль</th>
-                <th>Сотрудников</th>
+                <tr>
+                    <th>Роль</th>
+                    <th>Сотрудников</th>
+                </tr>
             </thead>
             <tbody>
                 {foreach from=$roles item=role}

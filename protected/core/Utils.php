@@ -179,6 +179,242 @@ class Utils{
             header('Content-Disposition: attachment; filename='.$name);
             $objWriter->save('php://output');
         }
+    }
 
+    public static function timesheetsave($report){
+        //Загружаем шаблон
+        $objReader = \PHPExcel_IOFactory::createReader('Excel5');
+        $objPHPExcel = $objReader->load('template.xls');
+
+        $date = array_keys($report[0]['report']);
+        $dateStart = "";
+        $dateEnd = "";
+        $isFirstWorkDay = true;
+
+        $mergeABCcol = 3;
+        $startRow = 26;
+
+        $holidaystartRow = 'D';
+        $holidaystartRow2 = 'D';
+        $holidaystartCow = 21;
+        $holidaystartCow2 = 23;
+        $r = 0; 
+        foreach ($report[0]['report'] as $key => $value) {
+            $objPHPExcel->setActiveSheetIndex(0);
+                if ($r < 15){
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$holidaystartRow$holidaystartCow", $key[8].$key[9]);
+                    if ( $value['dayType'] == 1 ){
+                        $objPHPExcel
+                            ->getActiveSheet()
+                            ->getStyle("$holidaystartRow$holidaystartCow:$holidaystartRow".($holidaystartCow+1))
+                            ->getFill()
+                            ->getStartColor()
+                            ->setRGB('FF0000');
+                    }
+                } else {
+                    if ($r >= 15){
+                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$holidaystartRow2$holidaystartCow2", $key[8].$key[9]);
+                        if ($value['dayType'] == 1 ){
+                            $objPHPExcel
+                                ->getActiveSheet()
+                                ->getStyle("$holidaystartRow2$holidaystartCow2:$holidaystartRow2".($holidaystartCow2 + 1))
+                                ->getFill()
+                                ->getStartColor()
+                                ->setRGB('FF0000');
+                        }
+                        $holidaystartRow2++;
+                        
+                    }
+                    
+
+                }
+                $holidaystartRow++;
+                $r++;
+            }
+
+        for ($i=0, $arrSize = count($report); $i < $arrSize; $i++) {
+
+            //Столбец номера по порядку
+            $objPHPExcel->getActiveSheet(0)->mergeCells('A'.$startRow.':A'.($startRow + $mergeABCcol));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("A$startRow", $i+1);
+
+            //столбец имени и уровня
+            $objPHPExcel->getActiveSheet(0)->mergeCells('B'.$startRow.':B'.($startRow + $mergeABCcol));
+            $name = $report[$i]['name'].', '.$report[$i]['position'];
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("B$startRow", $name);
+
+            //cтолбец табельный номер
+            $objPHPExcel->getActiveSheet(0)->mergeCells('C'.$startRow.':C'.($startRow + $mergeABCcol));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("C$startRow", $i+1);
+
+            $objPHPExcel->getActiveSheet(0)->mergeCells('U'.$startRow.':U'.($startRow + 1));
+            $objPHPExcel->getActiveSheet(0)->mergeCells('V'.$startRow.':V'.($startRow + 1));
+            $objPHPExcel->getActiveSheet(0)->mergeCells('W'.$startRow.':W'.($startRow + 1));
+
+            $objPHPExcel->getActiveSheet(0)->mergeCells('U'.($startRow + 2).':U'.($startRow + 3));
+            $objPHPExcel->getActiveSheet(0)->mergeCells('V'.($startRow + 2).':V'.($startRow + 3));
+            $objPHPExcel->getActiveSheet(0)->mergeCells('W'.($startRow + 2).':W'.($startRow + 3));
+
+            $startCol = 'D';
+            $startCol2 = 'D';
+            $halfMonthTime1 = '';
+            $halfMonthTime2 = '';
+            $workDayCount1 = '';
+            $workDayCount2 = '';
+            //время
+            foreach ($report[$i]['report'] as $keyDate => $valDate) {
+
+                if ( (int)$keyDate[8].$keyDate[9] <= 15){
+
+                    //время за полмесяца
+                    if ( $valDate['time'] != 0) $halfMonthTime1 += $valDate['time'];
+
+                    // кол-во рабочих дней месяца
+                    if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
+                        $workDayCount1++;
+                    }
+
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$startCol$startRow", $valDate['status_name']);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$startCol".($startRow + 1), $valDate['time']);
+
+                    //Время за полмесяца
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T$startRow", $workDayCount1);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T".($startRow + 1), $halfMonthTime1);
+
+                    //Закрашиваем выходные
+                    if ($valDate['dayType'] == 1){
+                        $objPHPExcel
+                        ->getActiveSheet()
+                        ->getStyle("$startCol$startRow:$startCol".($startRow + 1))
+                        ->getFill()
+                        ->getStartColor()
+                        ->setRGB('FF0000');
+                    }
+
+                    if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
+                        $workDayCount2++;
+                    }
+                    if ( $valDate['dayType'] != 1 ) {
+                        $dateEnd = $keyDate;
+                        if ($isFirstWorkDay){
+                            $dateStart = $keyDate;
+                            $isFirstWorkDay = false;
+                        }
+                    }
+
+                    $startCol++;
+
+                } else {
+
+                    //время за полмесяца
+                    if ( $valDate['time'] != 0) $halfMonthTime2 += $valDate['time'];
+
+                    // кол-во рабочих дней месяца
+                    if ( $valDate['status_name'] == 'Я' || $valDate['status_name'] == 'К' ){
+                        $workDayCount2++;
+                    }
+                    if ( $valDate['dayType'] != 1 ) {
+                        $dateEnd = $keyDate;
+                        if ($isFirstWorkDay){
+                            $dateStart = $keyDate;
+                            $isFirstWorkDay = false;
+                        }
+                    }
+
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$startCol2".($startRow + 2), $valDate['status_name']);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("$startCol2".($startRow + 3), $valDate['time']);
+
+                    //Время за полмесяца
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T".($startRow + 2), $workDayCount2);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T".($startRow + 3), $halfMonthTime2);
+
+                    //Закрашиваем выходные
+                    if ($valDate['dayType'] == 1){
+                        $objPHPExcel
+                        ->getActiveSheet()
+                        ->getStyle("$startCol2".($startRow + 2).":$startCol2".($startRow + 3))
+                        ->getFill()
+                        ->getStartColor()
+                        ->setRGB('FF0000');
+                    }
+                    $startCol2++;
+                }
+            }
+
+            $startRow += 4;
+            $dateEnd = date('d.m.Y', strtotime($dateEnd));
+            $dateStart = date('d.m.Y', strtotime($dateStart));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("V15", $dateEnd);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("P15", $dateEnd);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T15", $dateStart);
+        }
+
+        //Столбец номера по порядку
+        $objPHPExcel->getActiveSheet(0)->mergeCells('A'.$startRow.':A'.($startRow + $mergeABCcol));
+
+        //столбец имени и уровня
+        $objPHPExcel->getActiveSheet(0)->mergeCells('B'.$startRow.':B'.($startRow + $mergeABCcol));
+
+        //cтолбец табельный номер
+        $objPHPExcel->getActiveSheet(0)->mergeCells('C'.$startRow.':C'.($startRow + $mergeABCcol));
+
+        $objPHPExcel->getActiveSheet(0)->mergeCells('U'.$startRow.':U'.($startRow + 1));
+        $objPHPExcel->getActiveSheet(0)->mergeCells('V'.$startRow.':V'.($startRow + 1));
+        $objPHPExcel->getActiveSheet(0)->mergeCells('W'.$startRow.':W'.($startRow + 1));
+
+        $objPHPExcel->getActiveSheet(0)->mergeCells('U'.($startRow + 2).':U'.($startRow + 3));
+        $objPHPExcel->getActiveSheet(0)->mergeCells('V'.($startRow + 2).':V'.($startRow + 3));
+        $objPHPExcel->getActiveSheet(0)->mergeCells('W'.($startRow + 2).':W'.($startRow + 3));
+
+        
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("A$startRow", 'Работник кадровой службы');
+        $objPHPExcel->getActiveSheet()->getStyle("A".($startRow))->getFont()->setSize(8);
+
+        $startRow += 4;
+        $styleArray = array(
+          'borders' => array(
+              'allborders' => array(
+                  'style' => \PHPExcel_Style_Border::BORDER_NONE
+              )
+          )
+        );
+
+        $objPHPExcel->getActiveSheet()->getStyle("A$startRow:AA".($startRow + 6))->applyFromArray($styleArray);
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("C".($startRow), 'должность');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("E".($startRow), 'личная подпись');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("J".($startRow), 'расшифровка подписи');
+
+        $objPHPExcel->getActiveSheet()->getStyle("C".($startRow + 2).':M'.($startRow + 2))->getBorders()->getBottom()
+        ->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("E".($startRow + 2), '/');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("G".($startRow + 2), '/');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("N".($startRow + 2), '«')
+        ->getStyle("N".($startRow + 2))->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("P".($startRow + 2), '»');
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("T".($startRow + 2), substr($dateStart,6 ,10).'г.');
+        $objPHPExcel->getActiveSheet()->getStyle("T".($startRow + 2))->getFont()->setSize(8);
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("N15", substr($dateStart,4 ,2));
+
+        $objPHPExcel->getActiveSheet()->getStyle('O'.($startRow + 2))->getBorders()->getBottom()
+        ->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle("Q".($startRow + 2).':R'.($startRow + 2))->getBorders()->getBottom()
+        ->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("C".($startRow + 3), 'должность');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("E".($startRow + 3), 'личная подпись');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue("J".($startRow + 3), 'расшифровка подписи');
+
+        $objPHPExcel->getActiveSheet()->getStyle("A".($startRow).":AA".($startRow + 6))->getFont()->setSize(7);
+        $objPHPExcel->getActiveSheet()->getStyle("A".($startRow + 4).":AA".($startRow + 1000))->applyFromArray($styleArray);
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+
+        header('Content-Disposition: attachment; filename='.substr($dateStart,3 ,10).'.xlsx');
+        $objWriter->save('php://output');
     }
 }

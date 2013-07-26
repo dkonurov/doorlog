@@ -11,6 +11,7 @@ use models\Holidays;
 use core\Utils;
 use models\Status;
 use models\StatusesType;
+use models\Positions;
 
 class Reports extends Controller {
 
@@ -26,51 +27,40 @@ class Reports extends Controller {
      * @return void
      */
     public function timeoffsDepAction() {
-        if(!Acl::checkPermission('timeoffs_reports')){
+        if (!Acl::checkPermission('timeoffs_reports')) {
             $this->render("errorAccess.tpl");
         }
-        $timeoffs = array();
-        $users = array();
-        $reportAllDaysArray = array();
-        $name = array();
-        $totalDepInfo = array();
+        $date = date('m.Y');
+        $dep = array();
+        $reportResults = array();
+
+        $usersModel = new UsersModel();
+        $depModel = new DepartmentModel();
+
+        if (isset($_GET['date']) && !empty($_GET['date'])) {
+            $date = $_GET['date'];
+            $formattedDate = date('Y-m', strtotime('01.'.$date));
     
-        $timeoffsAllUsers = array();
-        $user = new UsersModel();
-        $dep = new DepartmentModel();
-        $date = date('m-Y');
-        $id = '';
-        if (isset($_GET['date']) && !empty($_GET['date'])){
-            $date = $queryDate = $_GET['date'];
-            $date = strtotime(strrev(strrev($date).'.10'));
-            $date = date('Y-m', $date);
-    
-            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ){
-                $totalDepInfo['statuses'] = $user->getUserStatuses();
-                $depInfo = $dep->getDepById($_GET['dep_id']);
-                $name['dep'] = $depInfo['name'];
-                $users = $dep->getUsers($_GET['dep_id']);
+            if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ) {
+                $dep = $depModel->getDepById($_GET['dep_id']);
+                $users = $depModel->getUsers($_GET['dep_id']);
                 foreach ($users as $currentUser) {
-                    $totalUserStats[] = array(
-                            'id' => $currentUser['id'],
-                            'name' => $currentUser['name'],
-                            'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $date))
+                    $reportResults[] = array(
+                        'id' => $currentUser['id'],
+                        'name' => $currentUser['name'],
+                        'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate))
                     );
-                    $totalDepInfo['totalUserStats'] = $totalUserStats;
-                    $totalDepInfo['date'] = $queryDate;
                 }
             }
         }
-        $allDep = $dep->getMenuDepartments();
-        $statuses = $user->getUserStatuses();
-        $timeoffsAttr = array('date' => $date, 'name' => $name, 'id' => $id);
-        $this->render("Reports/timeoffs_list_dep.tpl" , array('statuses' => $statuses,
-                'timeoffsAttr' => $timeoffsAttr,
-                'allDep' => $allDep,
-                'users' => $users,
-                'reportAllDaysArray' => $reportAllDaysArray,
-                'name' => $name,
-                'totalDepInfo' => $totalDepInfo));
+        $allDeps = $depModel->getMenuDepartments();
+        $allStatuses = $usersModel->getUserStatuses();
+        $this->render("Reports/timeoffs_list_dep.tpl" , array(
+            'allDeps' => $allDeps,
+            'allStatuses' => $allStatuses,
+            'reportResults' => $reportResults,
+            'reportParams' => array('date' => $date, 'dep' => $dep)
+        ));
     }
     
     /**
@@ -78,7 +68,7 @@ class Reports extends Controller {
      * @return void
      */
     public function timeoffsUserAction() {
-        if(!Acl::checkPermission('timeoffs_reports')){
+        if (!Acl::checkPermission('timeoffs_reports')) {
             $this->render("errorAccess.tpl");
         }
         $timeoffs = array();
@@ -297,36 +287,17 @@ class Reports extends Controller {
     }
 
     public function timesheetAction(){
+        if(!Acl::checkPermission('watch_timesheet')){
+            $this->render("errorAccess.tpl");
+        }
         $timesheet = array();
-        $user = new UsersModel();
-        $dep = new DepartmentModel();
         $date = date('Y-m');
         if (isset($_GET['date']) && $_GET['date']){
             $date = '01.'.$_GET['date'];
             $date = date('Y-m', strtotime($date));
         }
         $dayCount = date("t", strtotime($date));
-        $allDep = $dep->getMenuDepartments();
-        $countUsers = 0;
-        foreach ($allDep as $currentDep) {
-            $allUsers = $dep->getUsers($currentDep['id']);
-
-            foreach ($allUsers as $currentUser) {
-                $totalUserInfo = $user->getUserInfo($currentUser['id']);
-                if ($totalUserInfo['is_shown']){
-                    $monthReport = $this->getMonthReport($currentUser['id'], $date);
-                    $timesheet[$countUsers]['user_id'] = $currentUser['id'];
-                    $firstName = $totalUserInfo['first_name'];
-                    $secondName = $totalUserInfo['second_name'];
-                    $middleName = $totalUserInfo['middle_name'];
-                    $fullName = $secondName .' '.substr($firstName, 0, 2).'. '.substr($middleName, 0,2).'.';
-                    $timesheet[$countUsers]['name'] = $fullName;
-                    $timesheet[$countUsers]['position'] = $currentUser['position'];
-                    $timesheet[$countUsers]['report'] = $this->getOfficalTimeForTimesheet($currentUser['id'], $date);
-                    $countUsers++;
-                }
-            }
-        }
+        $timesheet = $this->getTimesheet($date);
         $holidays = new Holidays();
         $allHolidays = $holidays->getAllDays($date);
         $days = array();
@@ -335,6 +306,74 @@ class Reports extends Controller {
         }
         $date = date('m.Y', strtotime($date));
         $this->render("Reports/timesheet.tpl" , array('timesheet' => $timesheet,'days'=> $days,'date'=> $date, 'dayCount' => $dayCount));
+    }
+
+    public function timesheetsaveAction(){
+        if(!Acl::checkPermission('watch_timesheet')){
+            $this->render("errorAccess.tpl");
+        }
+        if (isset($_GET['date'])){
+            $date = date('Y-m', strtotime('01.'.$_GET['date']));
+        } else {
+            $date = date('Y-m');
+        }
+        $report = $this->getTimesheet($date);
+        $util = new Utils();
+        $util->timesheetsave($report);
+        $date = date('m.Y', strtotime($date.'-01'));
+        Utils::redirect("/reports/timesheet?date=$date");
+    }
+    private function getTimesheet($date){
+        $user = new UsersModel();
+        $dep = new DepartmentModel();
+        $pos = new Positions();
+        $timesheet = array();
+
+        $allPositions = $user->getPositionsList();
+        $posNames = array();
+
+        for ($p = 0, $arrSize = count($allPositions); $p < $arrSize; $p++){
+            $posNames[$allPositions[$p]['id']] = $allPositions[$p]['name'];
+        }
+
+        $allUsers = $user->getAllUsersForTimesheet();
+        for ($i = 0, $arrSize = count($allUsers); $i < $arrSize; $i++){
+
+            $isShowInThisMonth = false;
+
+            if ( $allUsers[$i]['startwork'] == '0000-00-00'){
+                $isShowInThisMonth = false;
+            } elseif( $allUsers[$i]['endwork'] == '0000-00-00' 
+                && strtotime(substr($allUsers[$i]['startwork'], 0, 7).'-01') <= strtotime($date.'-01') ){
+                $isShowInThisMonth = true;
+            } elseif( strtotime(substr($allUsers[$i]['startwork'], 0, 7).'-01') <= strtotime($date.'-01') && 
+                strtotime($date.'-01') <= strtotime(substr($allUsers[$i]['endwork'], 0, 7).'-01') ) {
+                $isShowInThisMonth = true;
+            } else {
+                $isShowInThisMonth = false;
+            }
+
+            if ( $allUsers[$i]['endwork'] == '0000-00-00' && $allUsers[$i]['startwork'] == '0000-00-00' ){
+                $isShowInThisMonth = false;
+            }
+
+            if ( $isShowInThisMonth ){
+
+                $timesheet[$i]['user_id'] = $allUsers[$i]['id'];
+
+                $firstName = $allUsers[$i]['first_name'];
+                $secondName = $allUsers[$i]['second_name'];
+                $middleName = $allUsers[$i]['middle_name'];
+                $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
+
+                $timesheet[$i]['name'] = $fullName;
+                $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
+                $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
+
+                $timesheet[$i]['position'] = $posNames[$actualPos];
+            }
+        }
+        return $timesheet;
     }
 
     private function getOfficalTimeForTimesheet($id, $date){
@@ -390,10 +429,14 @@ class Reports extends Controller {
         //Проставляем отгулы и командировки (отсутствие по ув причине), тип отгула
         for ($i=0, $arrSize = count($monthTimeOffs); $i < $arrSize; $i++) {
             $correctDate = $monthTimeOffs[$i]['date'];
-            if (!$isHalfWork){
-                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
-            } else {
-                $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
+            $report[$correctDate]['time'] = "";
+            if ($statusesTime[$monthTimeOffs[$i]['status_id']] != 0){
+                if (!$isHalfWork){
+                    $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']];
+                } else {
+                    $report[$correctDate]['time'] = $statusesTime[$monthTimeOffs[$i]['status_id']]/2;
+                }
+                
             }
             switch ($monthTimeOffs[$i]['status_id']) {
                 case StatusesType::SICK:

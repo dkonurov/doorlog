@@ -9,12 +9,16 @@
     {block name="pagetitle"}<h1>Результаты поиска</h1>{/block}
     {block name="content"}
     <div class="span7">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hover">
             {if $search}
-                <th> Имя </th>
-                <th> Отдел </th>
-                <th> Должность </th>
-                <th> Статус </th>
+                <thead>
+                    <tr>
+                        <th> Имя </th>
+                        <th> Отдел </th>
+                        <th> Должность </th>
+                        <th> Статус </th>
+                    </tr>
+                </thead>
                 {foreach from=$search item=user key=key}
                     <tr>
                         <td><a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['name']}</a></td>
