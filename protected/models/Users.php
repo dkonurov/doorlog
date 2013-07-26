@@ -581,4 +581,16 @@ class Users extends Model{
         $result = $this->fetchAll($q);
         return $result;
     }
+
+    /**
+     * Get user timesheetId by userId
+     * @return array
+    */
+    public function getUserTimesheetIdByUserId($userId)
+    {
+        $q = "SELECT timesheetid FROM user WHERE id = :user_id";
+        $params['user_id'] = $userId;
+        $result = $this->fetchOne($q, $params);
+        return $result['timesheetid'];
+    }
 }

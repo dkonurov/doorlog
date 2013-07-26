@@ -65,7 +65,7 @@
         <tr>
             <td rowspan="4"> {$id} </td>
             <td rowspan="4"> {$currentUser['name']}, {$currentUser['position']} </td>
-            <td rowspan="4">  </td>
+            <td rowspan="4"> {$currentUser['timesheetid']} </td>
             {$partitionDate = 1}
                {foreach from=$currentUser['report'] item=report}
                {if $partitionDate <= 15}

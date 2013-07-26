@@ -377,6 +377,7 @@ class Reports extends Controller {
                 $middleName = $allUsers[$i]['middle_name'];
                 $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
 
+                $timesheet[$i]['timesheetid'] = $user->getUserTimesheetIdByUserId($allUsers[$i]['id']);
                 $timesheet[$i]['name'] = $fullName;
                 $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
                 $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
