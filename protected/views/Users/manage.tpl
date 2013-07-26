@@ -66,9 +66,9 @@
                         <td>Фамилия*</td>
                         <td>
                             <input type="text" value="{if isset($userId)}{$userInfo['second_name']}{/if}" name="secondName" id="secondName">
-                            <button type=submit class="btn btn-success" id="swap" form="No">
+                            <a class="btn btn-success" id="swap">
                                 Ф <-> И
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     <tr>
