@@ -75,6 +75,7 @@ class Users extends Model{
         $searchName = '%' . $name . '%';
         $q="SELECT t.NAME as name,
                 u.id,
+                u.department_id as dep_id,
                 d.name as dep,
                 p.name as pos
             FROM `user` u

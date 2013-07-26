@@ -14,21 +14,28 @@
                 <thead>
                     <tr>
                         <th> Имя </th>
-                        <th> Отдел </th>
-                        <th> Должность </th>
                         <th> Статус </th>
+                        <th> Отдел </th>
                     </tr>
                 </thead>
                 {foreach from=$search item=user key=key}
                     <tr>
-                        <td><a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['name']}</a></td>
-                        <td> {$search[$key]['dep']} </td>
-                        <td> {$search[$key]['pos']} </td>
-                        <td> {if {$user['status']} == 2}
+                        <td>
+                            {if 'users_profile'|checkPermission}
+                                <a href='{$_root}/users/profile?id={$search[$key]['id']}'> {$search[$key]['name']}</a>
+                            {else}
+                                {$search[$key]['name']}
+                            {/if}
+                        </td>
+                        <td>
+                            {if {$user['status']} == 2}
                                 <span class="label label-success">В офисе</span>
                             {else}
                                 <span class="label">Не в офисе</span>
                             {/if}
+                        </td>
+                        <td>
+                            <a href="{$_root}/departments/show?id={$search[$key]['dep_id']}">{$search[$key]['dep']}</a>
                         </td>
                     </tr>
                 {/foreach}
