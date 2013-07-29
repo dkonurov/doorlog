@@ -6,7 +6,7 @@
     </script>
     <script src="{$_root}/assets/js/userProfileAutocomplete.js"></script>
 {/block}
-{block name="title"}Настройки профиля{/block}
+{block name="title"}{if $isOwner} Мой профиль {else} Просмотр профиля {/if}{/block}
 
     {block name="breadcrumbs"}
         <ul class="breadcrumb">
@@ -15,7 +15,7 @@
         </ul>
     {/block}
 
-    {block name="pagetitle"}<h1>Настройки профиля</h1>{/block}
+    {block name="pagetitle"}<h1>{if $isOwner} Мой профиль {else} Просмотр профиля {/if}</h1>{/block}
 
     {block name="content"}
     <div class="span7">
@@ -25,7 +25,14 @@
             </colgroup>
                 <tr>
                     <td> Имя </td>
-                    <td>{$userInfo['name']}</td>
+                    <td>
+                        {$userInfo['s_name']} {$userInfo['f_name']}
+                        {if $userInfo['status']==2}
+                            <span class="label label-success">В офисе</span>
+                        {else}
+                            <span class="label">Не в офисе</span>
+                        {/if}
+                    </td>
                 </tr>
                 <tr>
                     <td> Отдел </td>
@@ -74,16 +81,6 @@
                 <tr>
                     <td> Работа на полставки </td>
                     <td> {if {$userInfo['halftime']}} Да {else} Нет {/if}</td>
-                </tr>
-                <tr>
-                    <td> Статус </td>
-                    <td>
-                        {if $userInfo['status']==2}
-                            <span class="label label-success">В офисе</span>
-                        {else}
-                            <span class="label">Не в офисе</span>
-                        {/if}
-                    </td>
                 </tr>
         </table>
     </div>

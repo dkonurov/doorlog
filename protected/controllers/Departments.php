@@ -66,7 +66,7 @@ class Departments extends Controller {
 
             $sortedUsers = array();
             foreach ($users as $user) {
-                $sortedUsers[$user['id']] = $user['name'];
+                $sortedUsers[$user['id']] = $user['s_name'].' '.$user['f_name'];
             }
             $this->render("Departments/edit.tpl" , array('departments' => $departments, 'users' => $sortedUsers));
         }
@@ -104,14 +104,14 @@ class Departments extends Controller {
         $time  = new Time();
         $department =  new DepartmentModel();
         $userModel = new UserModel();
-        if(isset($_GET['id']) && $_GET['id']){
+        if(isset($_GET['id']) && $_GET['id']) {
             $depId = $_GET['id'];
         }
         $users = $department->getUsers($depId);
         sort($users);
         foreach($users as &$user) {
             $userId = $user['id'];
-            $userPersonalId=$user['personal_id'];
+            $userPersonalId = $user['personal_id'];
             $weekTime = $userModel->getUserStatus($userId);
             $user['status'] = $weekTime;
             $user['time'] = $time->getWeekInfo($userPersonalId, date('Y-m-d'));

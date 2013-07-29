@@ -37,7 +37,7 @@
                     {/if}
                     </td>
                     <td> {$department['total_users']} </td>
-                    <td> {$department['chief_name']} </td>
+                    <td> {$department['s_name']} {$department['f_name']} </td>
                 </tr>
             {/foreach}
             </tbody>

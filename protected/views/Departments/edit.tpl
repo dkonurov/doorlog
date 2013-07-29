@@ -13,7 +13,7 @@
 {block name="content"}
     {include file='protected/views/dialog.tpl'}
     <div class="span7">
-        <form method='post' id="edit-department">
+        <form method='POST' id="edit-department">
             <input type="text" name="depName" value="{$departments['name']}"><br>
             <p>Начальник отдела:</p>
             {if $users}

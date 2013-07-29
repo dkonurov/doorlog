@@ -20,9 +20,9 @@
             <select id="user_id" name="user_id">
             {foreach from=$allUsers item=user}
             {if {$user['id']} == {$smarty.get.user_id}}
-                <option value="{$user['id']}" {$userSelected=$user['id']} selected> {$user['name']} </option>
+                <option value = "{$user['id']}" {$userSelected=$user['id']} selected> {$user['s_name']} {$user['f_name']}</option>
             {else}
-                <option value="{$user['id']}"> {$user['name']} </option>
+                <option value = "{$user['id']}"> {$user['s_name']} {$user['f_name']} </option>
             {/if}
             {/foreach}
             </select>

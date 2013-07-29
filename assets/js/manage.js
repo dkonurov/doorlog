@@ -30,6 +30,12 @@ $(document).ready(function () {
             }
         });
 
+        $('#swap').click(function(){
+            var name = $('#firstName').val();
+            $('#firstName').val($('#secondName').val());
+            $('#secondName').val(name);
+        });
+
         if ($('#is_shown').val() == 0){
             var a = 1;
         } else {

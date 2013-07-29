@@ -46,9 +46,9 @@ class Reports extends Controller {
                 $users = $depModel->getUsers($_GET['dep_id']);
                 foreach ($users as $currentUser) {
                     $reportResults[] = array(
-                        'id' => $currentUser['id'],
-                        'name' => $currentUser['name'],
-                        'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate))
+                            'id' => $currentUser['id'],
+                            'name' => $currentUser['s_name'].' '.$currentUser['f_name'],
+                            'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate))
                     );
                 }
             }
@@ -366,6 +366,7 @@ class Reports extends Controller {
                 $middleName = $allUsers[$i]['middle_name'];
                 $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
 
+                $timesheet[$i]['timesheetid'] = $user->getUserTimesheetIdByUserId($allUsers[$i]['id']);
                 $timesheet[$i]['name'] = $fullName;
                 $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
                 $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);
