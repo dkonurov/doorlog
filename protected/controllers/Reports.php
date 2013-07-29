@@ -89,7 +89,7 @@ class Reports extends Controller {
             if (isset($_GET['user_id']) && $_GET['user_id'] != 0 ){
                 $reportAllDaysArray = $this->getMonthReport($_GET['user_id'], $date);
                 $userInfo = $user->getUserInfo($_GET['user_id']);
-                $name['user'] = $userInfo['name'];
+                $name['user'] = $userInfo['s_name'].' '.$userInfo['f_name'];
                 $id = $_GET['user_id'];
             }
         }
