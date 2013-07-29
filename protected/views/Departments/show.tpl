@@ -10,13 +10,17 @@
     {block name="pagetitle"}<h1>Просмотр отдела "{$depName['name']}"</h1>{/block}
 
     {block name="content"}
+    
+    {assign var="isAllowed" value='users_private_info'|checkRolePermission ||
+        'users_private_info'|checkDepartmentPermission:$depName['id']}
+    
     <div class="span7">
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th> Имя </th>
                     <th> Должность </th>
-                    {if 'users_private_info'|checkPermission || (isset($depName['chief_id']) && ($depName['chief_id']==$userId))}
+                    {if $isAllowed}
                         <th> Отработано за неделю </th>
                     {/if}
                     <th> Статус</th>
@@ -32,12 +36,10 @@
                     {else}
                     {$user['name']}
                     {/if} 
-                        {if isset($depName['chief_id']) && ($depName['chief_id']==$user['id'])}
-                            <span id="chief">начальник</span>
-                        {/if}
                     </td>
                     <td>{$user['position']}</td>
-                    {if 'users_private_info'|checkPermission || (isset($depName['chief_id']) && ($depName['chief_id']==$userId))}
+                    
+                    {if $isAllowed}
                         <td>{$user['time']['total_sum']|formatDate}</td>
                     {/if}
                     <td>

@@ -41,6 +41,16 @@ abstract class Controller {
                                 'checkPermission',
                                  array('core\Acl', 'checkPermission')
         );
+        
+        $smarty->registerPlugin('modifier',
+                'checkRolePermission',
+                array('core\Acl', 'checkRolePermission')
+        );
+        
+        $smarty->registerPlugin('modifier',
+                'checkDepartmentPermission',
+                array('core\Acl', 'checkDepartmentPermission')
+        );
 
         $smarty->display('protected/views/'.$path);
         exit();

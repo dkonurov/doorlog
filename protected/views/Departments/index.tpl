@@ -1,4 +1,3 @@
-
 {extends "protected/views/index.tpl"}
 {block name="title"} Отделы {/block}
 
@@ -22,7 +21,6 @@
                 <tr>
                     <th> Название отдела </th>
                     <th> Количество сотрудников </th>
-                    <th> Начальник </th>
                 </tr>
             </thead>
 
@@ -37,7 +35,6 @@
                     {/if}
                     </td>
                     <td> {$department['total_users']} </td>
-                    <td> {$department['s_name']} {$department['f_name']} </td>
                 </tr>
             {/foreach}
             </tbody>

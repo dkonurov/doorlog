@@ -593,4 +593,69 @@ class Users extends Model{
         $result = $this->fetchOne($q, $params);
         return $result['timesheetid'];
     }
+        
+    /** 
+     * Return department id and name for user
+     * @param integer $userId
+     * @return array department name and id
+     */
+    public function getDepartmentByUser($userId)
+    {
+        $query = "SELECT d.name, u.department_id
+                    FROM  `user` AS u
+                    JOIN department AS d ON d.id = u.department_id
+                    WHERE u.id = ( :user_id )";
+        $params['user_id'] = $userId;
+        $result = $this->fetchOne($query, $params);
+        
+        return $result;
+    }
+    
+    /**
+     * Return department id, permission id and permission key  for user
+     * @param integer $userId
+     * @return array department id, permission id and permission key 
+     */
+    public function getUserDepartmentPermission($userId)
+    {
+        $query = "SELECT u.department_id, u.permission_id, p.key
+                    FROM  `user_department_permission` AS u
+                    JOIN `permission` AS p ON p.id = u.permission_id
+                    WHERE u.user_id = ( :user_id )";
+        $params['user_id'] = $userId;
+        $result = $this->fetchAll($query, $params);
+        
+        return $result;
+    }
+    
+    /**
+     * Get all registered users in system from depatment
+     * @param integer $depId
+     * @return array
+     */
+    public function getDepUsers($depId)
+    {
+        $params = array();
+        $q= "SELECT
+              u.id,
+              t.id as personal_id,
+              t.NAME as name,
+              d.name as department,
+              p.name as position,
+              u.email as email
+            FROM `user` u
+            JOIN `tc-db-main`.`personal` t
+              ON u.personal_id = t.id
+            LEFT JOIN `position` p
+              ON u.position_id = p.id
+            LEFT JOIN `department` d
+              ON u.department_id = d.id
+            WHERE u.department_id = ".$depId."
+            ORDER BY t.NAME ";
+        
+                
+        $result = $this->fetchAll($q, $params);
+        
+        return $result;
+    }
 }

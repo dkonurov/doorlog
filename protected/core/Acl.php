@@ -62,16 +62,54 @@ class Acl {
 
         return false;
     }
+    
+    static function getUserDepartmentPermissions($userId){
+        $userDP = array();
+        $obj = new Users();
+        $result = $obj->getUserDepartmentPermission($userId);
+    
+        if (!empty( $result ) ){
+            foreach ($result as $key => $row) {
+                $userDP['permissions'][$key] = $row['key'];
+            }
+            $userDP['department_id'] = $result[0]['department_id'];
+        } else {
+            $userDP['permissions'] = array();
+        }
+    
+        return $userDP;
+    }
 
     static function checkPermission($permission){
         $userInfo = Registry::getValue('user');
-        if(isset($userInfo['permissions']) && is_array($userInfo['permissions'])&& in_array($permission, $userInfo['permissions'])){
-            return true;
-        }
+                        
+        $checkPermissions = self::checkRolePermission($permission);
+        $checkDepartmentPermissions = isset($userInfo['department_permissions']) && is_array($userInfo['department_permissions'])&& in_array($permission, $userInfo['department_permissions']['permissions']);
         
-            return false;
+        $isSuccess = $checkPermissions || $checkDepartmentPermissions;
+        return $isSuccess;
     }
+    
+    static function checkRolePermission($permission){
+        $userInfo = Registry::getValue('user');
+    
+        $isSuccess = isset($userInfo['permissions']) &&
+            is_array($userInfo['permissions']) &&
+            in_array($permission, $userInfo['permissions']);
+            
+        return $isSuccess;
+    }
+    
+    static function checkDepartmentPermission($permission, $departmentId){
+        $userInfo = Registry::getValue('user');
+    
+        $isSuccess = isset($userInfo['department_permissions']) &&
+            is_array($userInfo['department_permissions']) &&
+            in_array($permission, $userInfo['department_permissions']['permissions']) &&
+            ($userInfo['department_permissions']['department_id'] == $departmentId);
 
+        return $isSuccess;
+    }
 }
 
 ?>

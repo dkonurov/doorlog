@@ -18,6 +18,14 @@
     {block name="pagetitle"}<h1>{if $isOwner} Мой профиль {else} Просмотр профиля {/if}</h1>{/block}
 
     {block name="content"}
+    
+    {assign var="isAllowedUsersPrivateInfo" value='users_private_info'|checkRolePermission ||
+        'users_private_info'|checkDepartmentPermission:$userInfo['department_id'] ||
+        $isOwner}
+        
+    {assign var="isAllowedTimeoffsAdd" value='timeoffs_add'|checkRolePermission ||
+        'timeoffs_add'|checkDepartmentPermission:$userInfo['department_id']}
+        
     <div class="span7">
         <table class="table table-bordered">
             <colgroup>
@@ -50,7 +58,7 @@
                         {/if}
                     </td>
                 </tr>
-                {if ('users_private_info'|checkPermission) || $isOwner}
+                {if $isAllowedUsersPrivateInfo}
                     <tr>
                         <td> Телефон </td>
                         <td> {$userInfo['phone']} </td>
@@ -89,7 +97,7 @@
                 {include file='protected/views/Users/changePassword.tpl'}
             </div>
         {/if}
-        {if ('timeoffs_add'|checkPermission)}
+        {if $isAllowedTimeoffsAdd}
             <div class="span4 additional">
                 {include file='protected/views/Users/timeoff.tpl'}
             </div>
