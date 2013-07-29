@@ -635,7 +635,6 @@ class Users extends Model{
      */
     public function getDepUsers($depId)
     {
-        $params = array();
         $q= "SELECT
               u.id,
               t.id as personal_id,
@@ -652,9 +651,27 @@ class Users extends Model{
               ON u.department_id = d.id
             WHERE u.department_id = ".$depId."
             ORDER BY t.NAME ";
-        
-                
-        $result = $this->fetchAll($q, $params);
+
+        $result = $this->fetchAll($q);
+    }
+
+    /**
+     * Get last entries/exists
+     * @param $time
+     * @return array
+     */
+    public function getLastLogs($time)
+    {
+        $result = array();
+        if ($time) {
+            $q = "SELECT id, name, locationzone AS inside, UNIX_TIMESTAMP(locationact) AS time
+                FROM `tc-db-main`.personal
+                WHERE type = 'EMP' AND status = 'AVAILABLE' AND locationact > FROM_UNIXTIME(:time)
+                ORDER BY locationact";
+            $result = $this->fetchAll($q, array(
+                'time' => $time
+            ));
+        }
         
         return $result;
     }
