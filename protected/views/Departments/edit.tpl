@@ -15,15 +15,22 @@
     <div class="span7">
         <form method='post' id="edit-department">
             <input type="text" name="depName" value="{$departments['name']}"><br>
-            <p>Начальник отдела:</p>
             {if $users}
-                <select name="chief">
-                    <option value=0></option>
-                    {html_options options=$users selected={$departments['chief_id']}}
-                </select>
-            {else}
-                <select name="chief" disabled="disabled">
-                </select>
+                <div class="span7">
+                    <table class="table table-bordered">
+                        <th id="width150">Имя</th>
+                        {foreach from=$permissions item=permission}
+                        <th>{$permission['name']}</th>
+                        {/foreach}
+                        {foreach from=$users key=user_id item=user}  
+                        <tr>
+                            <td>{$user['name']}</td>
+                            {foreach from=$permissions item=permission}
+                            <td id="center"><input type="checkbox" name="{$permission['key']}_{$user_id}" value="{$permission['id']}" {if isset($user[$permission['key']])}checked{/if}></td>
+                            {/foreach}
+                        </tr>
+                        {/foreach}
+                    </table>
             {/if}
         </form>
 

@@ -178,3 +178,11 @@ input[type = "checkbox"] {
     line-height: 18px;
     height: 18px;
 }
+
+#center{
+    text-align:center;
+}
+
+#width150{
+    width: 150px;
+}

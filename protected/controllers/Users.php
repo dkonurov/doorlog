@@ -5,6 +5,7 @@ namespace controllers;
 use core\Controller;
 use models\Users as UsersModel;
 use models\Positions;
+use models\Departments;
 use models\StatusesType;
 use core\Utils;
 use core\FlashMessages;
@@ -259,6 +260,7 @@ class Users extends Controller {
         
         $users = new UsersModel();
         $roles = new RolesModel();
+        $departmentModel = new Departments();
 
         if (isset($_POST['position'])) {
             $workerType = $_POST['workertype'];
