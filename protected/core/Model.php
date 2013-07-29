@@ -63,7 +63,8 @@ abstract class Model {
         }
         $ans = $stmt->execute($params);
         if (!$ans) {
-            throw new \Exception("error execute '$queryString', '{${var_export($params)}}'");
+            $arrays = var_export($params);
+            throw new \Exception("error execute '$queryString', '$arrays'");
         }
         return $ans;
     }

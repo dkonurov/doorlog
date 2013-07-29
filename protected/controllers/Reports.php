@@ -31,35 +31,49 @@ class Reports extends Controller {
             $this->render("errorAccess.tpl");
         }
         $date = date('m.Y');
-        $dep = array();
         $reportResults = array();
+        $allDeps = array();
+        $currentDep = array();
 
         $usersModel = new UsersModel();
         $depModel = new DepartmentModel();
-
-        if (isset($_GET['date']) && !empty($_GET['date'])) {
-            $date = $_GET['date'];
-            $formattedDate = date('Y-m', strtotime('01.'.$date));
-    
+        $currentUser = $usersModel->getUserInfo($_COOKIE['id']);
+                
+        if (!Acl::checkRolePermission('timeoffs_reports')) {
+            $depId = $currentUser['department_id'];
+            $currentDep = $depModel->getDepById($depId);
+            $currentDate = $date;
+        } else {
             if (isset($_GET['dep_id']) && $_GET['dep_id'] != 0 ) {
-                $dep = $depModel->getDepById($_GET['dep_id']);
-                $users = $depModel->getUsers($_GET['dep_id']);
-                foreach ($users as $currentUser) {
-                    $reportResults[] = array(
-                        'id' => $currentUser['id'],
-                        'name' => $currentUser['name'],
-                        'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate))
-                    );
-                }
+                $depId = $_GET['dep_id'];
+            }
+            $allDeps = $depModel->getMenuDepartments();
+        }
+        
+        if (isset($_GET['date']) && !empty($_GET['date'])) {
+            $currentDate = $_GET['date'];
+        }
+                
+        if (isset($currentDate) && !empty($currentDate)) {
+            $date = $currentDate;
+            $formattedDate = date('Y-m', strtotime('01.'.$date));
+            $users = $depModel->getUsers($depId);
+            foreach ($users as $currentUser) {
+                $reportResults[] = array(
+                    'id' => $currentUser['id'],
+                    'name' => $currentUser['s_name'].' '.$currentUser['f_name'],
+                    'stats' => $this->totalSumReports($this->getMonthReport($currentUser['id'], $formattedDate)),
+                );
             }
         }
-        $allDeps = $depModel->getMenuDepartments();
+        
         $allStatuses = $usersModel->getUserStatuses();
         $this->render("Reports/timeoffs_list_dep.tpl" , array(
             'allDeps' => $allDeps,
             'allStatuses' => $allStatuses,
             'reportResults' => $reportResults,
-            'reportParams' => array('date' => $date, 'dep' => $dep)
+            'reportParams' => array('date' => $date),
+            'current_dep' => $currentDep
         ));
     }
     
@@ -89,11 +103,19 @@ class Reports extends Controller {
             if (isset($_GET['user_id']) && $_GET['user_id'] != 0 ){
                 $reportAllDaysArray = $this->getMonthReport($_GET['user_id'], $date);
                 $userInfo = $user->getUserInfo($_GET['user_id']);
-                $name['user'] = $userInfo['name'];
+                $name['user'] = $userInfo['s_name'].' '.$userInfo['f_name'];
                 $id = $_GET['user_id'];
             }
         }
-        $allUsers = $user->getRegistered();
+        
+        $currentUser = $user->getUserInfo($_COOKIE['id']);
+        
+        if (!Acl::checkRolePermission('timeoffs_reports')) {
+            $allUsers = $user->getDepUsers($currentUser['department_id']);
+        } else {
+            $allUsers = $user->getRegistered();
+        }
+        
         $allDep = $dep->getMenuDepartments();
         $statuses = $user->getUserStatuses();
         $timeoffsAttr = array('date' => $date, 'name' => $name, 'id' => $id);
@@ -366,6 +388,7 @@ class Reports extends Controller {
                 $middleName = $allUsers[$i]['middle_name'];
                 $fullName = $secondName .' '.substr($firstName, 0, 2).'.'.substr($middleName, 0,2).'.';
 
+                $timesheet[$i]['timesheetid'] = $user->getUserTimesheetIdByUserId($allUsers[$i]['id']);
                 $timesheet[$i]['name'] = $fullName;
                 $timesheet[$i]['report'] = $this->getOfficalTimeForTimesheet($allUsers[$i]['id'], $date);
                 $actualPos = $pos->getLatestActualPositionForCurrMonth($allUsers[$i]['id'], $date);

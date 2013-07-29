@@ -117,13 +117,19 @@ class Positions extends Model{
         $q = "SELECT `position_id`, `date` FROM `positions_history` WHERE `user_id` = :user_id";
         $params['user_id'] = $userId;
         $result = $this->fetchAll($q,$params);
-        for ($i = 0, $arrSize = count($result); $i  < $arrSize-1; $i++){
-            if (substr($result[$i]['date'], 0, 7) <= $date && $date < substr($result[$i+1]['date'], 0, 7)){
+        for ($i = 0, $arrSize = count($result); $i  < $arrSize-1; $i++) {
+            if (substr($result[$i]['date'], 0, 7) <= $date && $date < substr($result[$i+1]['date'], 0, 7)) {
                 $actualPos = $result[$i]['position_id'];
             }
         }
-        if (!$actualPos){
-            $actualPos = $result[$arrSize-1]['position_id'];
+        if (!$actualPos) {
+            if ($arrSize != 0) {
+                $actualPos = $result[$arrSize-1]['position_id'];
+            } else {
+                $query = "SELECT position_id FROM user WHERE id = :user_id";
+                $result = $this->fetchOne($query, $params);
+                $actualPos = $result['position_id'];
+            }
         }
         return $actualPos;
     }

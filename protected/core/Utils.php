@@ -245,7 +245,7 @@ class Utils{
 
             //cтолбец табельный номер
             $objPHPExcel->getActiveSheet(0)->mergeCells('C'.$startRow.':C'.($startRow + $mergeABCcol));
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("C$startRow", $i+1);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue("C$startRow", $report[$i]['timesheetid']);
 
             $objPHPExcel->getActiveSheet(0)->mergeCells('U'.$startRow.':U'.($startRow + 1));
             $objPHPExcel->getActiveSheet(0)->mergeCells('V'.$startRow.':V'.($startRow + 1));

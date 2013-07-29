@@ -16,15 +16,17 @@
         <form id="reports" action="{$_root}/reports/timeoffsdep">
 
         <div id="dep">
-            <select id='dep_id' name='dep_id'>
-            {foreach from=$allDeps item=dep}
-                {if {$dep['id']} == {$smarty.get.dep_id}}
-                    <option value="{$dep['id']}" {$depSelected=$dep['id']} selected> {$dep['name']} </option>
-                {else}
-                    <option value="{$dep['id']}"> {$dep['name']} </option>
-                {/if}
-            {/foreach}
-            </select>
+            {if isset($allDeps) && count($allDeps) > 0}
+                <select id='dep_id' name='dep_id'>
+                {foreach from=$allDeps item=dep}
+                    {if {$dep['id']} == {$smarty.get.dep_id}}
+                        <option value="{$dep['id']}" {$depSelected=$dep['id']} selected> {$dep['name']} </option>
+                    {else}
+                        <option value="{$dep['id']}"> {$dep['name']} </option>
+                    {/if}
+                {/foreach}
+                </select>
+            {/if}
         </div>
 
         <label for="datepicker"> Дата </label>

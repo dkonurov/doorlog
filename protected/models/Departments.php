@@ -7,19 +7,16 @@ use core\Model;
 class Departments extends Model {
 
         /**
-         * Get all departments(id, name, chief_name) and amount users
+         * Get all departments(id, name) and amount users
          * @return array
          */
         public function getAll(){
             $q = "SELECT
                 d.id,
                 d.name,
-                count(u.id) as total_users,
-                t.name as chief_name
+                count(u.id) as total_users
                 FROM department as d
-                LEFT JOIN user as u ON u.department_id = d.id
-                LEFT JOIN user as us ON us.id = d.chief_id
-                LEFT JOIN `tc-db-main`.personal as t ON t.id = us.personal_id
+                JOIN user as u ON u.department_id = d.id
                 GROUP BY d.id";
             $result = $this->fetchAll($q);
         return $result;
@@ -81,15 +78,13 @@ class Departments extends Model {
          * Edit departament
          * @param string $newname
          * @param integer $id
-         * @param integer $chief
          * @return bool
          */
-        public function editDep($newname, $id, $chief){
+        public function editDep($newname, $id){
             $params = array();
             $params['id'] = $id;
             $params['newname'] = $newname;
-            $params['chief'] = $chief;
-            $q = "UPDATE department SET name = (:newname), chief_id = (:chief) WHERE id = (:id) ";
+            $q = "UPDATE department SET name = (:newname) WHERE id = (:id) ";
             $result = $this->execute($q, $params);
             return $result;
         }
@@ -101,10 +96,8 @@ class Departments extends Model {
          */
         public function getUsers($depId){
             $attr = array();
-            $q = "SELECT p.name , pos.name as position, u.personal_id, u.id
-                FROM `tc-db-main`.personal as p
-                LEFT JOIN `savage-db`.user as u
-                ON u.personal_id = p.id
+            $q = "SELECT u.second_name as s_name, u.first_name as f_name, pos.name as position, u.personal_id, u.id
+                FROM `savage-db`.user as u
                 LEFT JOIN `savage-db`.position as pos
                 ON u.position_id = pos.id
                 WHERE u.department_id = :depId";
@@ -120,6 +113,80 @@ class Departments extends Model {
                 FROM user
                 WHERE department_id = :id";
             $result = $this->fetchOne($q, $params);
+            return $result;
+        }
+
+        /**
+         * Add permission for user in department
+         * @param integer $userId
+         * @param integer $permissionId
+         * @param integer $departmentId
+         * @return boolean result
+         */
+        public function insertPermissions($userId, $permissionId, $departmentId)
+        { 
+            $query = "INSERT INTO  user_department_permission(user_id, department_id, permission_id) 
+                VALUES(:user_id, :department_id, :permission_id)";
+            $params['user_id'] = $userId;
+            $params['permission_id'] = $permissionId;
+            $params['department_id'] = $departmentId;
+            $result = $this->execute($query, $params);
+            return $result;
+        }
+
+        /**
+         * Delete from base permissions for users
+         * @param integer $userId
+         * @param integer $permissionId
+         * @return boolean result
+         */
+        public function deletePermission($userId, $permissionId)
+        {
+            $query = "DELETE FROM user_department_permission
+                WHERE user_id = (:user_id) AND
+                permission_id = (:permission_id)";
+            $params['user_id'] = $userId;
+            $params['permission_id'] = $permissionId;
+            $result = $this->execute($query, $params);
+            return $result;
+        }
+
+        /**
+         * Select from base all users in departments and their permissions
+         * @param integer $departmentId
+         * @return array of users permissions
+         */
+        public function getUserDepartmentPermission($userId)
+        {
+            $query = "SELECT * FROM user_department_permission
+                WHERE user_id = :user_id";
+            $params['user_id'] = $userId;
+            $result = $this->fetchAll($query, $params);
+            return $result;
+        }
+
+        /**
+         * Return all permissions for departments
+         * @return array permissions
+         */
+        public function getDepartmentPermissions()
+        {
+            $query = "SELECT * FROM permission WHERE department_permission = 1";
+            $result = $this->fetchAll($query);
+            return $result;
+        }        
+
+        /**
+         * Delete all permissions for user
+         * @param integer $userId
+         * @return boolean result
+         */
+        public function deleteAllPermissionsForUser($userId)
+        {
+            $query = "DELETE FROM user_department_permission
+                WHERE user_id = (:user_id)";
+            $params['user_id'] = $userId;
+            $result = $this->execute($query, $params);
             return $result;
         }
 }

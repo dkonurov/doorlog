@@ -6,7 +6,7 @@
     </script>
     <script src="{$_root}/assets/js/userProfileAutocomplete.js"></script>
 {/block}
-{block name="title"}Настройки профиля{/block}
+{block name="title"}{if $isOwner} Мой профиль {else} Просмотр профиля {/if}{/block}
 
     {block name="breadcrumbs"}
         <ul class="breadcrumb">
@@ -15,9 +15,17 @@
         </ul>
     {/block}
 
-    {block name="pagetitle"}<h1>Настройки профиля</h1>{/block}
+    {block name="pagetitle"}<h1>{if $isOwner} Мой профиль {else} Просмотр профиля {/if}</h1>{/block}
 
     {block name="content"}
+    
+    {assign var="isAllowedUsersPrivateInfo" value='users_private_info'|checkRolePermission ||
+        'users_private_info'|checkDepartmentPermission:$userInfo['department_id'] ||
+        $isOwner}
+        
+    {assign var="isAllowedTimeoffsAdd" value='timeoffs_add'|checkRolePermission ||
+        'timeoffs_add'|checkDepartmentPermission:$userInfo['department_id']}
+        
     <div class="span7">
         <table class="table table-bordered">
             <colgroup>
@@ -25,7 +33,14 @@
             </colgroup>
                 <tr>
                     <td> Имя </td>
-                    <td>{$userInfo['name']}</td>
+                    <td>
+                        {$userInfo['s_name']} {$userInfo['f_name']}
+                        {if $userInfo['status']==2}
+                            <span class="label label-success">В офисе</span>
+                        {else}
+                            <span class="label">Не в офисе</span>
+                        {/if}
+                    </td>
                 </tr>
                 <tr>
                     <td> Отдел </td>
@@ -43,7 +58,7 @@
                         {/if}
                     </td>
                 </tr>
-                {if ('users_private_info'|checkPermission) || $isOwner}
+                {if $isAllowedUsersPrivateInfo}
                     <tr>
                         <td> Телефон </td>
                         <td> {$userInfo['phone']} </td>
@@ -75,16 +90,6 @@
                     <td> Работа на полставки </td>
                     <td> {if {$userInfo['halftime']}} Да {else} Нет {/if}</td>
                 </tr>
-                <tr>
-                    <td> Статус </td>
-                    <td>
-                        {if $userInfo['status']==2}
-                            <span class="label label-success">В офисе</span>
-                        {else}
-                            <span class="label">Не в офисе</span>
-                        {/if}
-                    </td>
-                </tr>
         </table>
     </div>
         {if $isOwner }
@@ -92,7 +97,7 @@
                 {include file='protected/views/Users/changePassword.tpl'}
             </div>
         {/if}
-        {if ('timeoffs_add'|checkPermission)}
+        {if $isAllowedTimeoffsAdd}
             <div class="span4 additional">
                 {include file='protected/views/Users/timeoff.tpl'}
             </div>

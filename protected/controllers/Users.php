@@ -5,6 +5,7 @@ namespace controllers;
 use core\Controller;
 use models\Users as UsersModel;
 use models\Positions;
+use models\Departments;
 use models\StatusesType;
 use core\Utils;
 use core\FlashMessages;
@@ -259,15 +260,16 @@ class Users extends Controller {
         
         $users = new UsersModel();
         $roles = new RolesModel();
+        $departmentModel = new Departments();
 
-        if (isset($_POST['department']) && isset($_POST['position']) && isset($_POST['email'])
-            && isset($_POST['phone']) && isset($_POST['birthday'])) {
+        if (isset($_POST['position'])) {
+            $workerType = $_POST['workertype'];
             $position = $_POST['position'];
             $firstName = $_POST['firstName'];
             $secondName = $_POST['secondName'];
             $middleName = $_POST['middleName'];
             $department = $_POST['department'];
-            $timesheetid = $_POST['timesheetid'];
+            $timesheetId = $_POST['timesheetid'];
             $role = $_POST['role'];
             $email = $_POST['email'];
             $phone = $_POST['phone'];
@@ -279,18 +281,18 @@ class Users extends Controller {
                 $birthday = "0000-00-00";
             }
 
-            $startwork = $_POST['startwork'];
-            if ($startwork != ""){
-                $startwork = date('Y-m-d', strtotime($startwork));
+            $startWork = $_POST['startwork'];
+            if ($startWork != ""){
+                $startWork = date('Y-m-d', strtotime($startWork));
             } else {
-                $startwork = "0000-00-00";
+                $startWork = "0000-00-00";
             }
 
-            $endwork = $_POST['endwork'];
-            if ($endwork != ""){
-                $endwork = date('Y-m-d', strtotime($endwork));
+            $endWork = $_POST['endwork'];
+            if ($endWork != ""){
+                $endWork = date('Y-m-d', strtotime($endWork));
             } else {
-                $endwork = "0000-00-00";
+                $endWork = "0000-00-00";
             }
 
             if (isset($_POST['is_shown'])){
@@ -300,14 +302,26 @@ class Users extends Controller {
             }
 
             if (isset($_POST['halftime'])){
-                $halftime = $_POST['halftime'];
+                $halfTime = $_POST['halftime'];
             } else {
-                $halftime = 0;
+                $halfTime = 0;
             }
-            if($isShown){
-                $inputErrors = $users->checkUserAttr($email, $position, $department, $timesheetid);
-            } else {
-                $inputErrors = $users->checkUserAttr($email, $position, $department);
+            $inputErrors = array();
+            switch ($workerType) {
+                case 1:
+                    $inputErrors = $users->checkUserAttr($email, $position, $department, $timesheetId);
+                    break;
+                case 2:
+                    $isShown = 0;
+                    $timesheetId = 0;
+                    $inputErrors = $users->checkUserAttr($email, $position, $department);
+                    break;
+                case 3:
+                    $department = NULL;
+                    $timesheetId = 0;
+                    $isShown = 0;
+                    $halfTime = 0;
+                    break;
             }
             if ($inputErrors){
                 $errorString = 'Ошибка заполнения поля: ' . implode(', ', $inputErrors).'.';
@@ -315,11 +329,11 @@ class Users extends Controller {
             } else {
                 if(isset($_GET['id']) && $_GET['id']){
                     $id = $_GET['id'];
-                    $this->update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid);
+                    $this->update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startWork, $endWork ,$phone, $isShown, $halfTime, $timesheetId);
                 } else {
                     if(isset($_POST['userId'])){
                         $user = $_POST['userId'];
-                        $this->add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid);
+                        $this->add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startWork, $endWork ,$phone, $isShown, $halfTime, $timesheetId);
                     }
                 }
             }
@@ -387,7 +401,7 @@ class Users extends Controller {
      * @param boolean $isShown
      * @return void
      */
-    public function add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid){
+    public function add($user, $secondName, $firstName, $middleName, $email, $position, $role, $department, $birthday, $startWork, $endWork ,$phone, $isShown, $halfTime, $timesheetId){
 
         $users = new UsersModel();
         $roles = new RolesModel();
@@ -397,7 +411,7 @@ class Users extends Controller {
         $password = Utils::createRandomString(8, 10);
         $hash = $this->generateHash($password, $salt);
 
-        if (($users->insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $phone, $birthday, $startwork, $endwork, $isShown, $halftime, $timesheetid))
+        if (($users->insertUsers($user, $secondName, $firstName, $middleName, $email, $hash, $salt, $position, $department, $phone, $birthday, $startWork, $endWork, $isShown, $halfTime, $timesheetId))
             && ($roles->insertUserRole($users->getId($user), $role))
             && ($pos->savePositionToHistory($users->getId($user), $position))) {
 
@@ -424,7 +438,7 @@ class Users extends Controller {
      * @param integer $isShown
      * @return void
      */
-    public function update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startwork, $endwork ,$phone, $isShown, $halftime, $timesheetid){
+    public function update($id, $secondName, $firstName, $middleName, $position, $role, $email, $department, $birthday, $startWork, $endWork ,$phone, $isShown, $halfTime, $timesheetId){
         $users = new UsersModel;
         $roles = new RolesModel();
         $pos = new Positions();
@@ -432,7 +446,7 @@ class Users extends Controller {
         if (($user['position_id'] != $position)){
             $pos->savePositionToHistory($id, $position);
         }
-        if(($users->editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startwork, $endwork, $phone, $isShown, $halftime, $timesheetid))
+        if(($users->editUser($id, $secondName, $firstName, $middleName, $position, $email, $department, $birthday, $startWork, $endWork, $phone, $isShown, $halfTime, $timesheetId))
             && ($roles->editUserRole($id, $role))){
             FlashMessages::addMessage("Пользователь успешно отредактирован.", "success");
         } else {

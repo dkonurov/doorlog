@@ -53,22 +53,82 @@ class Departments extends Controller {
         if(!Acl::checkPermission('departments_edit')){
                 $this->render("errorAccess.tpl");
         }
-        $id = $_GET['id'];
+        $departmentId = $_GET['id'];
         $departmentsModel =  new DepartmentModel();
-        if((isset($_POST['depName']) && $_POST['depName']) || (isset($_POST['chief']) && $_POST['chief'])){
+        if ((isset($_POST['depName']) && $_POST['depName'])) {
             $depName = $_POST['depName'];
-            $departmentsModel->editDep($depName, $id, $_POST['chief']);
-            FlashMessages::addMessage("Отдел успешно отредактирован.", "success");
+            $users = $departmentsModel->getUsers($departmentId);
+            $departmentUsersPermission = array();
+            $departmentsPermissions = $departmentsModel->getDepartmentPermissions();
+            foreach ($users as $user) {
+                foreach ($departmentsPermissions as $permission) {
+                    if (isset($_POST["{$permission['key']}_{$user['id']}"])) {
+                        $departmentUsersPermission[$user['id']][$permission['key']] = $_POST["{$permission['key']}_{$user['id']}"];
+                    }
+                }
+                $departmentUsersPermission[$user['id']]['null'] = null;
+            }
+            $departmentsModel->startTransaction();
+            try {
+                $departmentsModel->editDep($depName, $departmentId);
+                foreach ($departmentUsersPermission as $userId => $userPermission) {
+                    $permissions = $departmentsModel->getUserDepartmentPermission($userId);
+                    $permissionUsersDepartment = array();
+                    foreach ($permissions as  $permissionsForDepartment) {
+                        foreach ($departmentsPermissions as $permission) {
+                            if ($permissionsForDepartment['permission_id'] == $permission['id'])
+                                $permissionUsersDepartment[$permissionsForDepartment['user_id']][$permission['key']] = $permissionsForDepartment['permission_id'];
+                        }
+                    }
+                    if (!empty($permissions)) {
+                        foreach ($permissionUsersDepartment as $permissionsForDepartment) {
+                            foreach ($departmentsPermissions as $permission) {
+                                if (isset($userPermission[$permission['key']])) {
+                                    if (!isset($permissionsForDepartment[$permission['key']])) {
+                                        $departmentsModel->insertPermissions($userId, $permission['id'], $departmentId);
+                                    }
+                                } else {
+                                    if (isset($permissionsForDepartment[$permission['key']])) {
+                                        $departmentsModel->deletePermission($userId, $permission['id']);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        foreach ($departmentsPermissions as $permission) {
+                            if (isset($userPermission[$permission['key']])) {
+                                $departmentsModel->insertPermissions($userId, $permission['id'], $departmentId);
+                            }
+                        }
+                    }
+                }
+                $departmentsModel->commit();
+                FlashMessages::addMessage("Отдел успешно отредактирован.", "success");
+            } catch (\Exception $e) {
+                $departmentsModel->rollBack();
+                FlashMessages::addMessage("Отдел не был отредактирован", "error");
+            }
             Utils::redirect("/departments");
         } else {
-            $departments = $departmentsModel->getDepById($id);
-            $users = $departmentsModel->getUsers($id);
+            $departments = $departmentsModel->getDepById($departmentId);
+            $users = $departmentsModel->getUsers($departmentId);
 
             $sortedUsers = array();
+            $permissionForDepartments = $departmentsModel->getDepartmentPermissions();
             foreach ($users as $user) {
-                $sortedUsers[$user['id']] = $user['name'];
+
+                $sortedUsers[$user['id']]['name'] = $user['s_name'].' '.$user['f_name'];
+
+                $permissions = $departmentsModel->getUserDepartmentPermission($user['id']);
+                foreach ($permissions as $permission) {
+                    foreach ($permissionForDepartments as $departmentPermision){
+                        if ($departmentPermision['id'] == $permission['permission_id']){
+                            $sortedUsers[$user['id']][$departmentPermision['key']] = $permission['permission_id'];
+                        }
+                    }
+                }
             }
-            $this->render("Departments/edit.tpl" , array('departments' => $departments, 'users' => $sortedUsers));
+            $this->render("Departments/edit.tpl" , array('departments' => $departments, 'users' => $sortedUsers, 'permissions' => $permissionForDepartments));
         }
     }
 
@@ -104,14 +164,14 @@ class Departments extends Controller {
         $time  = new Time();
         $department =  new DepartmentModel();
         $userModel = new UserModel();
-        if(isset($_GET['id']) && $_GET['id']){
+        if(isset($_GET['id']) && $_GET['id']) {
             $depId = $_GET['id'];
         }
         $users = $department->getUsers($depId);
         sort($users);
         foreach($users as &$user) {
             $userId = $user['id'];
-            $userPersonalId=$user['personal_id'];
+            $userPersonalId = $user['personal_id'];
             $weekTime = $userModel->getUserStatus($userId);
             $user['status'] = $weekTime;
             $user['time'] = $time->getWeekInfo($userPersonalId, date('Y-m-d'));

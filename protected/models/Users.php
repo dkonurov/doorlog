@@ -32,7 +32,8 @@ class Users extends Model{
         $q= "SELECT
               u.id,
               t.id as personal_id,
-              t.NAME as name,
+              u.second_name as s_name,
+              u.first_name as f_name,
               d.name as department,
               p.name as position,
               u.email as email
@@ -73,19 +74,20 @@ class Users extends Model{
      */
     public function searchByName($name){
         $searchName = '%' . $name . '%';
-        $q="SELECT t.NAME as name,
+        $q="SELECT u.second_name as s_name,
+                u.first_name as f_name,
                 u.id,
+                u.department_id as dep_id,
                 d.name as dep,
                 p.name as pos
             FROM `user` u
-            JOIN `tc-db-main`.`personal` t
-              ON u.personal_id = t.id
             LEFT JOIN department as d
               ON u.department_id = d.id
             LEFT JOIN position as p
               ON u.position_id = p.id
-            WHERE t.NAME LIKE :searchName
-            ORDER BY t.NAME
+            WHERE  CONCAT(u.second_name, u.first_name) LIKE :searchName
+
+            ORDER BY CONCAT(u.second_name, u.first_name)
         ";
         $params=array();
         $params['searchName']=$searchName;
@@ -146,25 +148,40 @@ class Users extends Model{
      */
     public function checkUserAttr($email, $position, $department, $timesheetid = 1){
         $errors = array();
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Email';
         }
-        if (!$timesheetid || !is_numeric($timesheetid)){
-            $errors[] = 'Табельный номер';
+        if (!$timesheetid || !$this->checkTimesheetId($timesheetid)) {
+            $errors[] = 'Табельный номер уже существует';
         }
 
-        if (!$position){
+        if (!$position) {
             $errors[] = 'Должность';
         }
 
-        if (!$department){
+        if (!$department) {
             $errors[] = 'Отдел';
         }
         return $errors;
     }
 
-    /**
-     * Get all user attributes by email
+    /** Check unique timesheetd
+     * @param int $timesheetid
+     * @return bool
+     */
+    public function checkTimesheetId($timesheetId)
+    {
+        $q = "SELECT timesheetid FROM user WHERE timesheetid = :timesheetid";
+        $params['timesheetid'] = $timesheetId;
+        $result = $this->fetchOne($q, $params);
+        if (is_numeric($result['timesheetid']) && $result != 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /** Get all user attributes by email
      * @param string $email
      * @return array
      */
@@ -282,7 +299,8 @@ class Users extends Model{
               u.timesheetid,
               u.password,
               u.salt,
-              t.name,
+              u.second_name as s_name,
+              u.first_name as f_name,
               u.email,
               d.name as department,
               p.name as position,
@@ -293,9 +311,7 @@ class Users extends Model{
               u.created,
               u.is_shown,
               u.halftime
-            FROM `tc-db-main`.`personal` t
-            JOIN `user` u
-              ON t.id = u.personal_id
+            FROM `user` u
             LEFT JOIN `position` p
               ON u.position_id = p.id
             LEFT JOIN `department` d
@@ -567,6 +583,79 @@ class Users extends Model{
     }
 
     /**
+     * Get user timesheetId by userId
+     * @return array
+    */
+    public function getUserTimesheetIdByUserId($userId)
+    {
+        $q = "SELECT timesheetid FROM user WHERE id = :user_id";
+        $params['user_id'] = $userId;
+        $result = $this->fetchOne($q, $params);
+        return $result['timesheetid'];
+    }
+        
+    /** 
+     * Return department id and name for user
+     * @param integer $userId
+     * @return array department name and id
+     */
+    public function getDepartmentByUser($userId)
+    {
+        $query = "SELECT d.name, u.department_id
+                    FROM  `user` AS u
+                    JOIN department AS d ON d.id = u.department_id
+                    WHERE u.id = ( :user_id )";
+        $params['user_id'] = $userId;
+        $result = $this->fetchOne($query, $params);
+        
+        return $result;
+    }
+    
+    /**
+     * Return department id, permission id and permission key  for user
+     * @param integer $userId
+     * @return array department id, permission id and permission key 
+     */
+    public function getUserDepartmentPermission($userId)
+    {
+        $query = "SELECT u.department_id, u.permission_id, p.key
+                    FROM  `user_department_permission` AS u
+                    JOIN `permission` AS p ON p.id = u.permission_id
+                    WHERE u.user_id = ( :user_id )";
+        $params['user_id'] = $userId;
+        $result = $this->fetchAll($query, $params);
+        
+        return $result;
+    }
+    
+    /**
+     * Get all registered users in system from depatment
+     * @param integer $depId
+     * @return array
+     */
+    public function getDepUsers($depId)
+    {
+        $q= "SELECT
+              u.id,
+              t.id as personal_id,
+              t.NAME as name,
+              d.name as department,
+              p.name as position,
+              u.email as email
+            FROM `user` u
+            JOIN `tc-db-main`.`personal` t
+              ON u.personal_id = t.id
+            LEFT JOIN `position` p
+              ON u.position_id = p.id
+            LEFT JOIN `department` d
+              ON u.department_id = d.id
+            WHERE u.department_id = ".$depId."
+            ORDER BY t.NAME ";
+
+        $result = $this->fetchAll($q);
+    }
+
+    /**
      * Get last entries/exists
      * @param $time
      * @return array
@@ -583,6 +672,7 @@ class Users extends Model{
                 'time' => $time
             ));
         }
+        
         return $result;
     }
 }

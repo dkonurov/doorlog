@@ -33,9 +33,9 @@
                             <td> {$num} </td>
                             <td>
                             {if 'users_edit'|checkPermission}
-                            <a href="{$_root}/users/manage?id={$user['id']}"> {$user['name']} </a>
+                            <a href="{$_root}/users/manage?id={$user['id']}"> {$user['s_name']} {$user['f_name']} </a>
                             {else}
-                            {$user['name']}
+                            {$user['s_name']} {$user['f_name']}
                             {/if}
                             </td>
                             <td> {$user['email']} </td>

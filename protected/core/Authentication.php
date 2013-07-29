@@ -19,6 +19,7 @@ class Authentication{
 
             if ($userInfo && $userInfo['password'] == $_COOKIE['hash']) {
                 $userInfo['permissions'] = Acl::getUserPermissions($userInfo['id']);
+                $userInfo['department_permissions'] = Acl::getUserDepartmentPermissions($userInfo['id']);
                 Registry::setValue('user', $userInfo);
                 return true;
             }
