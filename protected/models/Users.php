@@ -565,4 +565,24 @@ class Users extends Model{
         $result = $this->fetchAll($q);
         return $result;
     }
+
+    /**
+     * Get last entries/exists
+     * @param $time
+     * @return array
+     */
+    public function getLastLogs($time)
+    {
+        $result = array();
+        if ($time) {
+            $q = "SELECT id, name, locationzone AS inside, UNIX_TIMESTAMP(locationact) AS time
+                FROM `tc-db-main`.personal
+                WHERE type = 'EMP' AND status = 'AVAILABLE' AND locationact > FROM_UNIXTIME(:time)
+                ORDER BY locationact";
+            $result = $this->fetchAll($q, array(
+                'time' => $time
+            ));
+        }
+        return $result;
+    }
 }

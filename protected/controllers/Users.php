@@ -536,4 +536,17 @@ class Users extends Controller {
             $this->render("errorAccess.tpl");
         }
     }
+
+    /**
+     * Get last entries/exists for notifications
+     * @return void
+     */
+    public function getNotificationsAction()
+    {
+        $userModel = new UsersModel();
+        $lastTime = $_GET['lastTime'];
+        $result = $userModel->getLastLogs($lastTime);
+        echo json_encode($result);
+    }
+
 }
