@@ -90,11 +90,17 @@ form {
     margin-left: 5px;
 }
 
-input[type = "checkbox"] {
+input[type="checkbox"] {
     display: inline-block;
     height: 18px;
     width: 18px;
     margin: 0 5px 0 0;
+}
+
+input[type="radio"] + label {
+    display: inline-block;
+    vertical-align: sub;
+    margin-right: 10px;
 }
 
 #chief {
@@ -143,8 +149,8 @@ input[type = "checkbox"] {
     clear: both;
 }
 
-.select {
-    margin: 1px;
+.form-element {
+    margin: 1px !important;
 }
 
 .border-none {
@@ -171,6 +177,26 @@ input[type = "checkbox"] {
 
 .table tr.total > td {
     background-color: #e9e9e9
+}
+
+.pre-table {
+    padding: 5px 0 8px 8px;
+}
+
+.table .adjacent-td {
+    position: relative;
+    border-top: none;
+    padding-top: 0;
+}
+
+.btn-swap {
+    position: absolute;
+    margin-top: 20px;
+    margin-left: 8px;
+}
+
+#report-timesheet th {
+    text-align: center;
 }
 
 #report-timesheet td.workday, #report-timesheet td.days-off {
