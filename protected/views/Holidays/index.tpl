@@ -38,7 +38,7 @@
                             <td>{$holiday['days']}</td>
                             <td> {$holiday['date']}</td>
                             <td>
-                                <select class="select {if $holiday['type']==1 or $holiday['type']==2} text-info {/if}" name="{$i}"{if $holiday['trigger']==1} id="holiday"{/if}>
+                                <select class="form-element {if $holiday['type']==1 or $holiday['type']==2} text-info {/if}" name="{$i}"{if $holiday['trigger']==1} id="holiday"{/if}>
                                     <option value="0"{if $holiday['trigger']==0} selected {/if}>Рабочий</option>
                                     {html_options values=$values output=$types selected=$holiday['type']}
                                 </select>

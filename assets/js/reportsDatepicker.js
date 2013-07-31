@@ -7,17 +7,18 @@ $(function() {
     showButtonPanel: true,
     dateFormat: 'mm.yy',
     closeText : "Готово",
-    currentText: "Сегодня",
+    currentText: "Текущий месяц",
     maxDate: "defaultDate",
     beforeShow: function(input) {
-        return { defaultDate: $(this).data('datePickerDate') }
+        var date = $(input).val();
+        var formattedDate = date.substr(0, 3) + '01.' + date.substr(3);
+        return { defaultDate: new Date(formattedDate) }
     },
 
     onClose: function(dateText, inst) {
         var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
         var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
         $(this).datepicker('setDate', new Date(year, month, 1));
-        $(this).data('datePickerDate', new Date(year, month, 1));
         $("#datepickerforsave").val($('#datepicker').val());
     }
     });
