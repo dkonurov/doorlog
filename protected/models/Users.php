@@ -414,12 +414,13 @@ class Users extends Model{
      * @return array
      */
     public function getTimeoffsByUserId($userId, $date, $type = 0){
-        $date1 = date("Y-m-d", strtotime($date));
-        $date2 = date("Y-m-d", (strtotime($date) + 30*24*60*60 ));
+        $numDays = date('t', strtotime($date)) - 1;
+        $startDate = date("Y-m-d", strtotime($date));
+        $endDate = date("Y-m-d", (strtotime($startDate) + $numDays*24*60*60 ));
         $params = array();
         $params['id'] = $userId;
-        $params['date1'] = $date1;
-        $params['date2'] = $date2;
+        $params['date1'] = $startDate;
+        $params['date2'] = $endDate;
         $q = "SELECT *
             FROM users_statuses AS u
         LEFT JOIN status AS s ON u.status_id = s.id
