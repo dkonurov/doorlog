@@ -74,32 +74,21 @@ class Departments extends Controller {
                 foreach ($departmentUsersPermission as $userId => $userPermission) {
                     $permissions = $departmentsModel->getUserDepartmentPermission($userId);
                     $permissionUsersDepartment = array();
+                    $permissionUsersDepartment['null'] = null;
                     foreach ($permissions as  $permissionsForDepartment) {
                         foreach ($departmentsPermissions as $permission) {
-                            if ($permissionsForDepartment['permission_id'] == $permission['id'])
-                                $permissionUsersDepartment[$permissionsForDepartment['user_id']][$permission['key']] = $permissionsForDepartment['permission_id'];
+                            if ($permissionsForDepartment['permission_id'] == $permission['id']) {
+                                $permissionUsersDepartment[$permission['key']] = $permissionsForDepartment['permission_id'];
+                            }
                         }
                     }
-                    if (!empty($permissions)) {
-                        foreach ($permissionUsersDepartment as $permissionsForDepartment) {
-                            foreach ($departmentsPermissions as $permission) {
-                                if (isset($userPermission[$permission['key']])) {
-                                    if (!isset($permissionsForDepartment[$permission['key']])) {
-                                        $departmentsModel->insertPermissions($userId, $permission['id'], $departmentId);
-                                    }
-                                } else {
-                                    if (isset($permissionsForDepartment[$permission['key']])) {
-                                        $departmentsModel->deletePermission($userId, $permission['id']);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        foreach ($departmentsPermissions as $permission) {
-                            if (isset($userPermission[$permission['key']])) {
-                                $departmentsModel->insertPermissions($userId, $permission['id'], $departmentId);
-                            }
-                        }
+                    $insertArray = array_diff($userPermission, $permissionUsersDepartment);
+                    $deleteArray = array_diff($permissionUsersDepartment, $userPermission);
+                    foreach ($insertArray as $insertPermission) {
+                        $departmentsModel->insertPermissions($userId, $insertPermission, $departmentId);
+                    }
+                    foreach ($deleteArray as $deletePermission) {
+                        $departmentsModel->deletePermission($userId, $deletePermission);
                     }
                 }
                 $departmentsModel->commit();
